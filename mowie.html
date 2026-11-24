@@ -834,7 +834,7 @@ function parseCloze(text){
 const clozeFull=e=>e.audioText||e.lines.map(l=>l.map(s=>typeof s==="string"?s:s.a[0]).join("")).join(" ");
 /* extra book-style exercises added to a lesson section from separate data files */
 function CZ(n,sec,src){ const L=LESSONS[n]; if(!L) return; const st=L.steps.find(s=>s.k==="practice"&&s.sec===sec); if(st) st.ex.push(...parseEx(src)); else console.warn("CZ: no section",n,sec); }
-const SEC_LABEL={scene:"Диалог",grammar:"Грамматика",vocab:"Слова",text:"Текст"};
+const SEC_LABEL={scene:"Диалог",grammar:"Грамматика",vocab:"Słówka",text:"Текст"};
 function LX(d){
   const L={id:d.n,title:d.title,ru:d.ru,intro:d.intro||"",goals:d.goals||[],who:d.who||[],vocab:parseVocab(d.vocab),dict:d.dict||{},steps:[{k:"intro",label:"Введение"}]};
   (d.secs||[]).forEach((s,i)=>{
@@ -917,8 +917,8 @@ function tokenize(text,dict){
   }).join("");
 }
 function setBar(html,cls=""){ if(html===null){bar.hidden=true; return;} bar.hidden=false; bar.className="bar "+cls; barin.innerHTML=html; }
-function srsDue(){return Object.keys(S.srs).filter(k=>S.srs[k].due<=Date.now());}
-function addVocab(L){L.vocab.forEach(v=>{if(!S.srs[v.pl]) S.srs[v.pl]={box:0,due:Date.now()};});}
+function srsDue(){return wDue(allWords());}
+function addVocab(L){/* words are learned explicitly in the lesson's Słówka section */}
 let VMAP={}, GDICT={};
 const dictOf=L=>Object.assign({},GDICT,L.dict||{});
 const practiceSteps=L=>L.steps.map((s,i)=>s.k==="practice"?i:-1).filter(i=>i>=0);
@@ -961,7 +961,7 @@ function renderHome(){
   <section class="stats">
     <div class="stat"><span class="v">${S.xp}</span><span class="k">очков опыта</span></div>
     <button class="stat" data-act="words"><span class="v">${wl}</span><span class="k">слов выучено</span></button>
-    <button class="stat" data-act="review"><span class="v">${due}</span><span class="k">${words?"фраз уроков на повтор":"повторение уроков"}</span></button>
+    <button class="stat" data-act="review"><span class="v">${due}</span><span class="k">слов на повтор</span></button>
   </section>${voiceBanner()}`;
   PARTS.forEach(p=>{
     const lv=LEVELS.find(l=>l.from===p.from); if(lv) h+=`<div class="lvl"><b>${lv.n}</b><span>${lv.ru} · уроки ${lv.from}–${lv.to}</span></div>`;
@@ -1114,6 +1114,7 @@ function vScene(el,step,L){
 }
 
 function vVocab(el,step,L){
+  if(LW[L.id]) return vLessonWords(el,step,L);
   const cats=[...new Set(L.vocab.map(v=>v.c))];
   el.innerHTML=head(step.sec?`Раздел ${step.sec} · Słownictwo`:"Słownictwo",step.title||(L.id===1?"Фразы для урока польского":"Слова урока"),`${L.vocab.length} слов и выражений. После урока они попадут в повторение.`,step.sec)+
   `<div class="row" style="margin-bottom:14px"><button class="toggle" data-act="selftest" aria-pressed="false">Проверить себя: скрыть перевод</button><button class="toggle" data-act="slow" aria-pressed="${S.slow}">Медленно</button></div>
@@ -1368,11 +1369,11 @@ function vDone(el,step,L){
     <div class="big3" style="margin-top:14px">
       <div class="stat"><span class="v">${t?Math.round(f/t*100):0}%</span><span class="k">с первой попытки</span></div>
       <div class="stat"><span class="v">${S.xp}</span><span class="k">всего XP</span></div>
-      <div class="stat"><span class="v">${L.vocab.length}</span><span class="k">фраз в повторении</span></div>
+      <div class="stat"><span class="v">${learnedIn(LW[L.id]||[])}/${(LW[L.id]||[]).length}</span><span class="k">слов урока выучено</span></div>
     </div>
     <div class="stack" style="margin-top:20px">
       <div class="callout"><h3>Теперь вы умеете</h3><ul class="goals">${L.goals.map(g=>`<li><span>${g}</span></li>`).join("")}</ul></div>
-      <div class="row"><button class="btn primary" data-act="review">Повторить слова</button></div>
+      <div class="row"><button class="btn primary" data-act="wlesson" data-i="${L.id}">Słówka этого урока</button><button class="btn" data-act="review">Повторить все слова</button></div>
       ${nc?`<div class="callout"><p class="eyebrow">Следующий урок${nextL?"":" · скоро"}</p><h3>Lekcja ${nc[0]} · ${nc[1]}</h3><p class="muted">${nc[2]}: ${nc[3]}.</p>${nextL?`<div><button class="btn primary" data-act="open" data-i="${nextL.id}">Начать урок ${nextL.id}</button></div>`:""}</div>`:`<div class="callout"><p class="eyebrow">Курс пройден</p><h3>Gratulacje! Вы прошли все 46 уроков A1–A2.</h3><p class="muted">Продолжайте повторять слова в разделе Słownictwo, чтобы ничего не забыть.</p></div>`}
     </div>`;
 }
@@ -1406,7 +1407,11 @@ function renderReview(){
 let WV={topic:null}, WS=null;
 const ST_RU={new:"новое",learn:"учу",done:"выучено",known:"уже знаю"};
 function wStatus(w){const s=S.voc[w.id]; if(!s) return "new"; if(s.k) return "known"; if(s.box>=4) return "done"; return "learn";}
-function allWords(){return WORDS.flatMap(t=>t.words);}
+function allWords(){return [...WALL.values()];}
+function wGroup(id){
+  if(typeof id==="string"&&/^L\d+$/.test(id)){const n=+id.slice(1), L=LESSONS[n]; return L?{id,pl:`Lekcja ${n} · ${L.title}`,ru:L.ru,words:LW[n]||[]}:null;}
+  return WORDS.find(t=>t.id===id);
+}
 function wDue(list){const now=Date.now(); return list.filter(w=>{const s=S.voc[w.id]; return s&&!s.k&&s.due<=now;});}
 function vdayN(){return S.vday.d===today()?S.vday.n:0;}
 const learnedIn=list=>list.filter(w=>["done","known"].includes(wStatus(w))).length;
@@ -1469,21 +1474,21 @@ function renderWords(){
      <div class="meter"><div style="width:${Math.min(100,Math.round(n/S.goal*100))}%"></div></div>
      <div class="row"><button class="btn primary" data-act="wrev" data-id="*" ${due?"":"disabled"}>Повторить${due?` (${due})`:""}</button><button class="btn" data-act="wlearn" data-id="*">Новые слова из всех тем</button></div>
    </div>
-   <h2>Темы</h2>
-   <div class="topics">${WORDS.map(t=>{const d=learnedIn(t.words), dd=wDue(t.words).length; return `<button class="topic" data-act="wtopic" data-id="${t.id}"><span class="pl">${t.pl}</span><small>${t.ru} · ${t.words.length} слов${dd?` · <span class="due">${dd} на повтор</span>`:""}</small><div class="meter"><div style="width:${Math.round(d/t.words.length*100)}%"></div></div><small>выучено ${d} из ${t.words.length}</small></button>`;}).join("")}</div>
+   ${wModeTabs()}
+   ${WV.mode!=="topics"?lessonWordList():""}<div class="topics" ${WV.mode!=="topics"?"hidden":""}>${WORDS.map(t=>{const d=learnedIn(t.words), dd=wDue(t.words).length; return `<button class="topic" data-act="wtopic" data-id="${t.id}"><span class="pl">${t.pl}</span><small>${t.ru} · ${t.words.length} слов${dd?` · <span class="due">${dd} на повтор</span>`:""}</small><div class="meter"><div style="width:${Math.round(d/t.words.length*100)}%"></div></div><small>выучено ${d} из ${t.words.length}</small></button>`;}).join("")}</div>
   </div>`;
 }
 function renderTopic(){
   setBar(null);
-  const t=WORDS.find(x=>x.id===WV.topic), nw=t.words.filter(w=>wStatus(w)==="new").length, due=wDue(t.words).length, d=learnedIn(t.words);
-  app.innerHTML=`<div class="row" style="margin:6px 0 2px"><button class="btn ghost" data-act="wback">← Все темы</button></div>`+
+  const t=wGroup(WV.topic), nw=t.words.filter(w=>wStatus(w)==="new").length, due=wDue(t.words).length, d=learnedIn(t.words);
+  app.innerHTML=`<div class="row" style="margin:6px 0 2px"><button class="btn ghost" data-act="wback">← ${/^L/.test(WV.topic)?"Все уроки":"Все темы"}</button>${/^L/.test(WV.topic)?`<button class="btn ghost" data-act="open" data-i="${WV.topic.slice(1)}">Открыть урок</button>`:""}</div>`+
   head("Słownictwo · тема",t.pl,`${t.ru} · ${t.words.length} слов · выучено ${d}`)+
   `<div class="stack"><div class="row"><button class="btn primary" data-act="wlearn" data-id="${t.id}" ${nw?"":"disabled"}>Учить новые${nw?` (${nw})`:""}</button><button class="btn" data-act="wrev" data-id="${t.id}" ${due?"":"disabled"}>Повторить${due?` (${due})`:""}</button><button class="toggle" data-act="selftest" aria-pressed="false">Скрыть перевод</button></div>
   <div class="legend"><span><i class="dot"></i>новое</span><span><i class="dot learn"></i>учу</span><span><i class="dot done"></i>выучено</span></div>
   <div id="vlist">${t.words.map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div></div>`;
 }
 function startLearn(tid){
-  const src=tid==="*"?allWords():WORDS.find(t=>t.id===tid).words;
+  const src=tid==="*"?allWords():wGroup(tid).words;
   const pool=src.filter(w=>wStatus(w)==="new");
   WS={kind:"intro",tid,pool:tid==="*"?shuffle(pool):pool,pos:0,picked:[],size:Math.min(10,Math.max(5,S.goal-vdayN()))};
   renderWSession();
@@ -1495,24 +1500,24 @@ function startDrill(){
   renderWSession();
 }
 function startReview(tid){
-  const src=tid==="*"?allWords():WORDS.find(t=>t.id===tid).words;
+  const src=tid==="*"?allWords():wGroup(tid).words;
   const due=shuffle(wDue(src)).slice(0,20);
   WS={kind:"review",tid,words:due,items:due.map(w=>{const b=S.voc[w.id].box; return {w,m:b<=1?"pr":b===2?"rp":"ty"};}),pos:0,ok:0,re:new Set()};
   renderWSession();
 }
 function distract(w,f){
-  const t=WORDS.find(x=>x.id===w.t); let pool=t.words.filter(x=>x.id!==w.id&&x[f]!==w[f]);
+  const t=wGroup(w.t); let pool=t?t.words.filter(x=>x.id!==w.id&&x[f]!==w[f]):[];
   if(pool.length<3) pool=allWords().filter(x=>x.id!==w.id&&x[f]!==w[f]);
   return shuffle(pool).slice(0,3).map(x=>x[f]);
 }
 function renderWSession(){
   window.scrollTo(0,0);
-  const tname=WS.tid==="*"?"Все темы":WORDS.find(t=>t.id===WS.tid).pl;
+  const tname=WS.tid==="*"?"Все темы":wGroup(WS.tid).pl;
   if(WS.kind==="intro"){
     if(WS.pos>=WS.pool.length||WS.picked.length>=WS.size) return startDrill();
     const w=WS.pool[WS.pos];
     app.innerHTML=head(`Новые слова · ${tname}`,`Выбрано ${WS.picked.length} из ${WS.size}`,"Знакомое слово отметьте «Уже знаю», незнакомое добавьте в тренировку.")+
-    `<div class="flash"><span class="wtag">${WORDS.find(t=>t.id===w.t).ru}</span><span class="pl">${w.pl}</span>${playBtn(sp(w.pl))}<span class="ru">${w.ru}</span>${w.ex?`<span class="exs"><span class="pl">${w.ex}</span><br>${w.exr}</span>`:""}</div>`;
+    `<div class="flash"><span class="wtag">${wGroup(w.t).ru}</span><span class="pl">${w.pl}</span>${playBtn(sp(w.pl))}<span class="ru">${w.ru}</span>${w.ex?`<span class="exs"><span class="pl">${w.ex}</span><br>${w.exr}</span>`:""}</div>`;
     setBar(`<button class="btn ghost" data-act="wquit">Выйти</button><span class="sp"></span><button class="btn" data-act="wknow">Уже знаю</button><button class="btn primary" data-act="wadd">Учить</button>`);
     setTimeout(()=>say(sp(w.pl)),200);
     return;
@@ -1520,7 +1525,7 @@ function renderWSession(){
   if(WS.kind==="sum"){
     setBar(null);
     app.innerHTML=head(WS.title,WS.sub,"")+`<div class="flash"><span class="wq">${WS.big}</span><span class="muted">${WS.note}</span></div>
-    <div class="row" style="margin-top:16px">${WS.more?`<button class="btn primary" data-act="wlearn" data-id="${WS.tid}">Ещё новые слова</button>`:""}<button class="btn" data-act="wback">К темам</button></div>`;
+    <div class="row" style="margin-top:16px">${/^L/.test(WS.tid||"")?`<button class="btn primary" data-act="open" data-i="${WS.tid.slice(1)}">Вернуться к уроку</button>`:""}${WS.more?`<button class="btn primary" data-act="wlearn" data-id="${WS.tid}">Ещё новые слова</button>`:""}<button class="btn" data-act="wback">К темам</button></div>`;
     return;
   }
   if(WS.pos>=WS.items.length) return finishWS();
@@ -1580,7 +1585,7 @@ function finishWS(){
     WS.words.forEach(w=>{S.voc[w.id]={box:1,due:Date.now()+DAY};});
     if(S.vday.d!==today()) S.vday={d:today(),n:0};
     S.vday.n+=n; S.xp+=3*n; save();
-    const left=(tid==="*"?allWords():WORDS.find(t=>t.id===tid).words).some(w=>wStatus(w)==="new");
+    const left=(tid==="*"?allWords():wGroup(tid).words).some(w=>wStatus(w)==="new");
     WS={kind:"sum",tid,title:"Слова добавлены",sub:`${n} новых слов в тренировке`,big:`+${n}`,note:`Первое повторение завтра. Сегодня новых: ${S.vday.n} из ${S.goal}.`,more:left};
   } else {
     S.xp+=2*n; save();
@@ -1615,7 +1620,9 @@ document.addEventListener("click",ev=>{
     case "goal": S.goal=i; save(); render(); break;
     case "tr2": S.tr=!S.tr; save(); t.setAttribute("aria-pressed",S.tr); document.getElementById("ptw").classList.toggle("hide-tr",!S.tr); break;
     case "open": { cur=i||1; const p=LP(cur); if(p.done&&p.step===LESSONS[cur].steps.length-1) p.step=0; P=null; view="lesson"; save(); render(); break; }
-    case "review": view="review"; R=null; render(); break;
+    case "review": view="words"; WS=null; WV.topic=null; if(srsDue().length) startReview("*"); else render(); break;
+    case "wlesson": view="words"; WS=null; WV.topic="L"+i; render(); break;
+    case "wmode": WV.mode=t.dataset.m; WS=null; WV.topic=null; render(); break;
     case "review-again": R=null; render(); break;
     case "addnow": addVocab(L1); addVocab(L2); save(); R=null; render(); break;
     case "reset": resetAsk=true; renderHome(); break;
@@ -1798,7 +1805,60 @@ function genBookTasks(){
     }
   });
 }
+/* ===== One word bank: lesson vocab + topic words, no duplicates; every word belongs to one lesson ===== */
+const WALL=new Map(), LW={};
+const TOPIC_LESSONS={zwroty:[1,2],podstawy:[2,3],liczby:[2,6,8],ludzie:[12],wyglad:[5],charakter:[39,40],rzeczy:[4,19],
+  czasowniki1:[3,7,8,11,14,23],praca:[6,28],wolny:[7,14],zakupy:[8,16],jedzenie:[9,11],napoje:[9,11],kuchnia:[9,43],owoce:[10],
+  czasowniki2:[10,12,13,15,16,18],czas:[13,17],zwierzeta:[14,37],miasto:[15],transport:[15,35],pogoda:[17,37],uczucia:[18,41],
+  dom:[19,20],podroze:[21,36],swieta:[22,32],technologia:[23,33],ubrania:[24],cialo:[25],przymiotniki:[4,24,26],
+  nauka:[27,45],urzad:[29,30],sport:[31,34],slowka:[20,22,26,40,42,44,46]};
+const WKEY=pl=>norm(pl.replace(/…/g,""));
+function wAdd(src){
+  const k=WKEY(src.pl); let w=WALL.get(k);
+  if(!w){w={id:k,k,pl:src.pl,ru:src.ru,ex:src.ex||"",exr:src.exr||"",topics:[],lesson:0,t:""}; WALL.set(k,w);}
+  else if(!w.ex&&src.ex){w.ex=src.ex; w.exr=src.exr||"";}
+  return w;
+}
+function buildWordBank(){
+  const ids=Object.keys(LESSONS).map(Number).sort((a,b)=>a-b);
+  ids.forEach(n=>(LESSONS[n].vocab||[]).forEach(v=>{const w=wAdd(v); if(!w.lesson) w.lesson=n;}));
+  WORDS.forEach(t=>{ const seen=new Set(); t.words=t.words.map(x=>{const w=wAdd(x); if(!w.topics.includes(t.id)) w.topics.push(t.id); return w;}).filter(w=>!seen.has(w.k)&&seen.add(w.k)); });
+  WORDS.forEach(t=>{
+    const ls=(TOPIC_LESSONS[t.id]||[46]).filter(n=>LESSONS[n]), free=t.words.filter(w=>!w.lesson);
+    const per=Math.ceil(free.length/ls.length);
+    free.forEach((w,i)=>{w.lesson=ls[Math.min(ls.length-1,Math.floor(i/per))];});
+  });
+  WALL.forEach(w=>{ if(!w.lesson) w.lesson=46; w.t=w.topics[0]||("L"+w.lesson); (LW[w.lesson]=LW[w.lesson]||[]).push(w); });
+  /* move old progress (topic:word keys, lesson phrase review) to the shared keys */
+  const voc={};
+  Object.keys(S.voc||{}).forEach(key=>{const k=WKEY(key.includes(":")?key.slice(key.indexOf(":")+1):key); if(WALL.has(k)&&!voc[k]) voc[k]=S.voc[key];});
+  Object.keys(S.srs||{}).forEach(pl=>{const k=WKEY(pl); if(WALL.has(k)&&!voc[k]) voc[k]={box:S.srs[pl].box||0,due:S.srs[pl].due||Date.now()};});
+  S.voc=voc; S.srs={}; save();
+}
+function wModeTabs(){return `<div class="row" role="tablist"><button class="toggle" data-act="wmode" data-m="lessons" aria-pressed="${WV.mode!=="topics"}">По урокам</button><button class="toggle" data-act="wmode" data-m="topics" aria-pressed="${WV.mode==="topics"}">По темам</button></div>`;}
+function lessonWordList(){
+  let h="";
+  LEVELS.forEach(lv=>{
+    h+=`<div class="lvl" style="margin-top:18px"><b>${lv.n}</b><span>${lv.ru}</span></div><div class="gref">`;
+    for(let n=lv.from;n<=lv.to;n++){ const ws=LW[n]; if(!ws||!LESSONS[n]) continue; const d=learnedIn(ws), dd=wDue(ws).length;
+      h+=`<button data-act="wlesson" data-i="${n}"><span class="ln-n">L${n}</span><span><span class="pl">${LESSONS[n].title}</span><small>${ws.length} слов · выучено ${d}${dd?` · <span class="red">${dd} на повтор</span>`:""}</small><span class="meter" style="display:block;margin-top:6px"><span style="display:block;height:100%;width:${Math.round(d/ws.length*100)}%;background:var(--blue);border-radius:99px"></span></span></span><span class="muted">›</span></button>`; }
+    h+=`</div>`;
+  });
+  return h;
+}
+function vLessonWords(el,step,L){
+  const ws=LW[L.id]||[], nw=ws.filter(w=>wStatus(w)==="new").length, due=wDue(ws).length, d=learnedIn(ws);
+  const own=new Set((L.vocab||[]).map(v=>WKEY(v.pl)));
+  const groups=[["Из урока",ws.filter(w=>own.has(w.k))]];
+  [...new Set(ws.filter(w=>!own.has(w.k)).map(w=>w.topics[0]))].forEach(tid=>{const t=WORDS.find(x=>x.id===tid); groups.push([`По теме: ${t?t.pl+" · "+t.ru:""}`,ws.filter(w=>!own.has(w.k)&&w.topics[0]===tid)]);});
+  el.innerHTML=head(`Раздел ${step.sec||""} · Słówka`,`Słówka: слова урока`,`${ws.length} слов: из диалогов урока и из словаря по теме. Выучено ${d} из ${ws.length}. Выученные слова сами попадут в повторение.`,step.sec)+
+  `<div class="stack"><div class="meter"><div style="width:${Math.round(d/Math.max(1,ws.length)*100)}%"></div></div>
+  <div class="row"><button class="btn primary" data-act="wlearn" data-id="L${L.id}" ${nw?"":"disabled"}>Учить слова урока${nw?` (${nw})`:""}</button><button class="btn" data-act="wrev" data-id="L${L.id}" ${due?"":"disabled"}>Повторить${due?` (${due})`:""}</button><button class="toggle" data-act="selftest" aria-pressed="false">Скрыть перевод</button></div>
+  <div class="legend"><span><i class="dot"></i>новое</span><span><i class="dot learn"></i>учу</span><span><i class="dot done"></i>выучено</span></div>
+  <div id="vlist" class="stack">${groups.filter(g=>g[1].length).map(g=>`<div class="vgroup"><h3>${g[0]}</h3>${g[1].map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div>`).join("")}</div></div>`;
+}
 function boot(){
+  buildWordBank();
   Object.values(LESSONS).forEach(L=>(L.vocab||[]).forEach(v=>{VMAP[v.pl]=v; if(!/\s/.test(v.pl.trim())) GDICT[norm(v.pl)]=v.ru;}));
   WORDS.forEach(t=>t.words.forEach(w=>w.pl.split(" / ").forEach(p=>{p=p.trim(); if(!/\s/.test(p)){const k=norm(p); if(k&&!GDICT[k]) GDICT[k]=w.ru;}})));
   genBookTasks();
