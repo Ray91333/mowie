@@ -1879,11 +1879,60 @@ function vLessonWords(el,step,L){
   <div class="legend"><span><i class="dot"></i>новое</span><span><i class="dot learn"></i>учу</span><span><i class="dot done"></i>выучено</span></div>
   <div id="vlist" class="stack">${groups.filter(g=>g[1].length).map(g=>`<div class="vgroup"><h3>${g[0]}</h3>${g[1].map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}${giHTML(w)}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div>`).join("")}</div></div>`;
 }
+/* ===== Step 3: "word in the right form" tasks built from each lesson's own words ===== */
+function spread(arr,k){ if(arr.length<=k) return arr.slice(); const out=[]; for(let i=0;i<k;i++) out.push(arr[Math.floor(i*arr.length/k)]); return out; }
+function tTable(pl,q,head,rows,cap,bank){ return {t:"tcloze",plain:true,pl,q,cap,headPlain:head,rows,lines:rows.map(r=>r.flatMap(c=>c.segs)),bank}; }
+const cell=x=>({pr:"",segs:[x]}), gapc=a=>({pr:"",segs:[{a:[a]}]});
+function genWordTasks(){
+  Object.keys(LW).map(Number).forEach(n=>{
+    const L=LESSONS[n], ws=LW[n]; if(!L||n<3) return;
+    const vi=L.steps.findIndex(s=>s.k==="vocab"); if(vi<0) return;
+    const single=w=>!/[\s\/…!?.]/.test(w.pl.trim());
+    const nouns=ws.filter(w=>{const g=GN[gkey(w.pl)]; return g&&g.g!=="pl"&&single(w)&&w.pl===w.pl.toLowerCase();});
+    const verbs=ws.filter(w=>{const v=GV[gkey(w.pl)]; return v&&!/3 л/.test(v.f)&&gkey(w.pl)===w.pl.trim();});
+    const adjs=ws.filter(w=>single(w)&&GA.has(gkey(w.pl))&&adjForms(gkey(w.pl))&&!/^(pierwszy|drugi|trzeci|który|jaki|najlepszy)$/.test(gkey(w.pl)));
+    const ex=[];
+    if(verbs.length>=2){
+      const rows=spread(verbs,5).map(w=>{const f=GV[gkey(w.pl)].f.split(", "); return [cell(w.pl),gapc(f[0]),gapc(f[1])];});
+      ex.push(tTable("Proszę uzupełnić tabelkę.","Формы глаголов этого урока: ja и ty (у совершенного вида это будущее время)",["bezokolicznik","ja","ty"],rows,"Czasowniki",false));
+    }
+    if(n>=4&&nouns.length>=3){
+      const txt=spread(nouns,6).map(w=>`[${({m:"ten",ż:"ta",n:"to"})[GN[gkey(w.pl)].g]}] ${w.pl}`).join(" · ");
+      ex.push({t:"cloze",pl:"Proszę uzupełnić: ten, ta, to.",q:"Род существительных этого урока",lines:parseCloze(txt),bank:true,extra:[]});
+    }
+    if(n>=4&&adjs.length){
+      const byG={}; nouns.filter(w=>!/не склоняется/.test(GN[gkey(w.pl)].pl)).forEach(w=>{const g=GN[gkey(w.pl)].g; (byG[g]=byG[g]||[]).push(w);});
+      const gs=["ż","n","m"].filter(g=>byG[g]);
+      if(gs.length>=2){
+        const ad=spread(adjs,3), lines=[];
+        gs.forEach((g,i)=>{ const a=gkey(ad[i%ad.length].pl), f=adjForms(a), nw=byG[g][i%byG[g].length]; lines.push(`(${a}) [${f[{m:0,ż:1,n:2}[g]]}] ${nw.pl}`); });
+        ex.push({t:"cloze",pl:"Proszę uzupełnić końcówki przymiotników.",q:"Согласуйте прилагательное с существительным",lines:parseCloze(lines.join(" // ")),bank:false,extra:[]});
+      }
+    }
+    if(n>=8){
+      const fem=spread(nouns.filter(w=>GN[gkey(w.pl)].g==="ż"&&/a$/.test(w.pl)),4);
+      if(fem.length>=2) ex.push({t:"cloze",pl:"Proszę uzupełnić: biernik (kogo? co?).",q:"Поставьте в винительный падеж, как после mam, lubię, widzę: женский род на -a → -ę",lines:parseCloze(fem.map(w=>`${w.pl} → [${w.pl.slice(0,-1)}ę]`).join(" // ")),bank:false,extra:[]});
+    }
+    if(n>=10){
+      const pls=spread(nouns.filter(w=>{const p=GN[gkey(w.pl)].pl; return p&&p!=="—"&&!/[\/(]/.test(p)&&!/\s/.test(p)&&p!==w.pl;}),5);
+      if(pls.length>=3) ex.push(tTable("Proszę uzupełnić tabelkę.","Множественное число (mianownik l. mn.)",["liczba pojedyncza","liczba mnoga"],pls.map(w=>[cell(w.pl),gapc(GN[gkey(w.pl)].pl)]),"Liczba mnoga",false));
+    }
+    if(n>=22){
+      const asp=spread(verbs.filter(w=>{const a=GV[gkey(w.pl)].a; return a&&/^n?dk /.test(a);}),5);
+      if(asp.length>=2) ex.push(tTable("Proszę uzupełnić tabelkę.","Видовые пары глаголов этого урока",["niedokonany","dokonany"],asp.map(w=>{const a=GV[gkey(w.pl)].a; return a.startsWith("dk ")?[cell(w.pl),gapc(a.slice(3))]:[gapc(a.slice(4)),cell(w.pl)];}),"Aspekt",true));
+    }
+    if(!ex.length) return;
+    const nx=L.steps[vi+1];
+    if(nx&&nx.k==="practice") nx.ex.push(...ex);
+    else L.steps.splice(vi+1,0,{k:"practice",label:"Задания",sec:L.steps[vi].sec,ex});
+  });
+}
 function boot(){
   buildWordBank();
   Object.values(LESSONS).forEach(L=>(L.vocab||[]).forEach(v=>{VMAP[v.pl]=v; if(!/\s/.test(v.pl.trim())) GDICT[norm(v.pl)]=v.ru;}));
   WORDS.forEach(t=>t.words.forEach(w=>w.pl.split(" / ").forEach(p=>{p=p.trim(); if(!/\s/.test(p)){const k=norm(p); if(k&&!GDICT[k]) GDICT[k]=w.ru;}})));
   genBookTasks();
+  genWordTasks();
   genTableTasks();
   render();
   setTimeout(()=>{ loadVoices(); const vb=document.getElementById("vb"); if(vb&&plVoices.length) vb.remove(); },1200);
