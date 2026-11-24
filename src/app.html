@@ -318,6 +318,10 @@ table.btab{border-collapse:collapse;width:100%;min-width:420px;background:var(--
 .btab .end{color:var(--red);font-weight:800}
 .tcl td{font-size:1.05rem}
 .tcl .gin{min-width:3ch}
+/* word grammar line */
+.ginfo{display:block;font-size:.78rem;font-weight:500;color:var(--muted);line-height:1.35;margin-top:2px}
+.ginfo b{color:var(--red);font-weight:700;margin-right:2px}
+.flash .ginfo{font-size:.95rem;text-align:center}
 /* grammar reference */
 .gterm{display:inline-block;background:var(--red);color:#FFFFFF;font-family:var(--f-display);font-size:.72rem;letter-spacing:.06em;padding:3px 9px;border-radius:6px;margin-bottom:6px}
 details.case{border:2px solid var(--blue);border-radius:16px;background:var(--card);overflow:hidden}
@@ -852,6 +856,24 @@ const GTAGS={}, CASES=[], VREFS=[];
 function GT(n,sec,term){GTAGS[n+sec]=term;}
 function CASE(c){CASES.push(c);}
 function VREF(v){VREFS.push(v);}
+/* word grammar: nouns (gender, plural), verbs (ja/ty, aspect), adjectives (by rule) */
+const GN={}, GV={}, GA=new Set();
+const gkey=pl=>pl.toLowerCase().replace(/[.,!?…]/g,"").replace(/\s+/g," ").trim();
+function NG(src){lines(src).forEach(l=>{const f=l.split("|"); GN[gkey(f[0])]={g:f[1],pl:(f[2]||"").trim()};});}
+function VG(src){lines(src).forEach(l=>{const f=l.split("|"); GV[gkey(f[0])]={f:f[1],a:(f[2]||"").trim()};});}
+function AG(src){src.trim().split(/\s+/).forEach(x=>GA.add(x));}
+const GLAB={m:"м. р.",ż:"ж. р.",n:"ср. р."};
+function adjForms(a){ if(/[kg]i$/.test(a)) return [a,a.slice(0,-1)+"a",a.slice(0,-1)+"ie"]; if(/i$/.test(a)) return [a,a+"a",a+"e"]; if(/y$/.test(a)) return [a,a.slice(0,-1)+"a",a.slice(0,-1)+"e"]; return null; }
+function gramInfo(w){
+  const k=gkey(w.pl);
+  const n=GN[k];
+  if(n) return n.g==="pl"?`<b>l. mn.</b> только мн. ч.${n.pl?" · "+n.pl:""}`:`<b>${n.g}</b> ${GLAB[n.g]}${n.pl==="—"?" · мн. ч. не употр.":n.pl?` · мн. ч.: ${n.pl}`:""}`;
+  let v=GV[k]; if(!v){const t=k.split(" "); if(t.length>1) v=GV[t.slice(0,2).join(" ")]||GV[t[0]];}
+  if(v){ const perf=v.a.startsWith("ndk"); return `${perf?"<b>dk</b> буд.: ":"<b>ndk</b> "}${v.f}${v.a?` · ${perf?"несов.: "+v.a.slice(4):"сов.: "+v.a.slice(3)}`:""}`; }
+  if(GA.has(k)){const f=adjForms(k); if(f) return `<b>прил.</b> ${f.join(", ")}`;}
+  return "";
+}
+const giHTML=w=>{const g=gramInfo(w); return g?`<small class="ginfo">${g}</small>`:"";};
 /* word trainer topics */
 const WORDS=[];
 function WT(id,pl,ru,src){WORDS.push({id,pl,ru,words:lines(src).map(l=>{const f=l.split("|"); return {id:id+":"+f[0],pl:f[0],ru:f[1],ex:f[2]||"",exr:f[3]||"",t:id};})});}
@@ -1485,7 +1507,7 @@ function renderTopic(){
   head("Słownictwo · тема",t.pl,`${t.ru} · ${t.words.length} слов · выучено ${d}`)+
   `<div class="stack"><div class="row"><button class="btn primary" data-act="wlearn" data-id="${t.id}" ${nw?"":"disabled"}>Учить новые${nw?` (${nw})`:""}</button><button class="btn" data-act="wrev" data-id="${t.id}" ${due?"":"disabled"}>Повторить${due?` (${due})`:""}</button><button class="toggle" data-act="selftest" aria-pressed="false">Скрыть перевод</button></div>
   <div class="legend"><span><i class="dot"></i>новое</span><span><i class="dot learn"></i>учу</span><span><i class="dot done"></i>выучено</span></div>
-  <div id="vlist">${t.words.map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div></div>`;
+  <div id="vlist">${t.words.map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}${giHTML(w)}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div></div>`;
 }
 function startLearn(tid){
   const src=tid==="*"?allWords():wGroup(tid).words;
@@ -1517,7 +1539,7 @@ function renderWSession(){
     if(WS.pos>=WS.pool.length||WS.picked.length>=WS.size) return startDrill();
     const w=WS.pool[WS.pos];
     app.innerHTML=head(`Новые слова · ${tname}`,`Выбрано ${WS.picked.length} из ${WS.size}`,"Знакомое слово отметьте «Уже знаю», незнакомое добавьте в тренировку.")+
-    `<div class="flash"><span class="wtag">${wGroup(w.t).ru}</span><span class="pl">${w.pl}</span>${playBtn(sp(w.pl))}<span class="ru">${w.ru}</span>${w.ex?`<span class="exs"><span class="pl">${w.ex}</span><br>${w.exr}</span>`:""}</div>`;
+    `<div class="flash"><span class="wtag">${wGroup(w.t).ru}</span><span class="pl">${w.pl}</span>${giHTML(w)}${playBtn(sp(w.pl))}<span class="ru">${w.ru}</span>${w.ex?`<span class="exs"><span class="pl">${w.ex}</span><br>${w.exr}</span>`:""}</div>`;
     setBar(`<button class="btn ghost" data-act="wquit">Выйти</button><span class="sp"></span><button class="btn" data-act="wknow">Уже знаю</button><button class="btn primary" data-act="wadd">Учить</button>`);
     setTimeout(()=>say(sp(w.pl)),200);
     return;
@@ -1576,7 +1598,7 @@ function wAnswer(ok,near){
   touch(); save();
   setTimeout(()=>say(sp(w.pl)),120);
   const title=ok?(near?"Почти! Проверьте польские буквы":"Верно!"):"Не совсем";
-  setBar(`<div class="fbt"><b>${title}</b><span><b class="pl">${w.pl}</b> — ${w.ru}</span>${w.ex?`<span class="muted">${w.ex}</span>`:""}</div><button class="btn primary" data-act="wnext">Дальше</button>`,ok?"ok":"bad");
+  setBar(`<div class="fbt"><b>${title}</b><span><b class="pl">${w.pl}</b> — ${w.ru}</span>${gramInfo(w)?`<span class="muted">${gramInfo(w)}</span>`:""}${w.ex?`<span class="muted">${w.ex}</span>`:""}</div><button class="btn primary" data-act="wnext">Дальше</button>`,ok?"ok":"bad");
   barin.querySelector('[data-act="wnext"]')?.focus();
 }
 function finishWS(){
@@ -1855,7 +1877,7 @@ function vLessonWords(el,step,L){
   `<div class="stack"><div class="meter"><div style="width:${Math.round(d/Math.max(1,ws.length)*100)}%"></div></div>
   <div class="row"><button class="btn primary" data-act="wlearn" data-id="L${L.id}" ${nw?"":"disabled"}>Учить слова урока${nw?` (${nw})`:""}</button><button class="btn" data-act="wrev" data-id="L${L.id}" ${due?"":"disabled"}>Повторить${due?` (${due})`:""}</button><button class="toggle" data-act="selftest" aria-pressed="false">Скрыть перевод</button></div>
   <div class="legend"><span><i class="dot"></i>новое</span><span><i class="dot learn"></i>учу</span><span><i class="dot done"></i>выучено</span></div>
-  <div id="vlist" class="stack">${groups.filter(g=>g[1].length).map(g=>`<div class="vgroup"><h3>${g[0]}</h3>${g[1].map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div>`).join("")}</div></div>`;
+  <div id="vlist" class="stack">${groups.filter(g=>g[1].length).map(g=>`<div class="vgroup"><h3>${g[0]}</h3>${g[1].map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}${giHTML(w)}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div>`).join("")}</div></div>`;
 }
 function boot(){
   buildWordBank();

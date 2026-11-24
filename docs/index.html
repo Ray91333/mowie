@@ -322,6 +322,10 @@ table.btab{border-collapse:collapse;width:100%;min-width:420px;background:var(--
 .btab .end{color:var(--red);font-weight:800}
 .tcl td{font-size:1.05rem}
 .tcl .gin{min-width:3ch}
+/* word grammar line */
+.ginfo{display:block;font-size:.78rem;font-weight:500;color:var(--muted);line-height:1.35;margin-top:2px}
+.ginfo b{color:var(--red);font-weight:700;margin-right:2px}
+.flash .ginfo{font-size:.95rem;text-align:center}
 /* grammar reference */
 .gterm{display:inline-block;background:var(--red);color:#FFFFFF;font-family:var(--f-display);font-size:.72rem;letter-spacing:.06em;padding:3px 9px;border-radius:6px;margin-bottom:6px}
 details.case{border:2px solid var(--blue);border-radius:16px;background:var(--card);overflow:hidden}
@@ -856,6 +860,24 @@ const GTAGS={}, CASES=[], VREFS=[];
 function GT(n,sec,term){GTAGS[n+sec]=term;}
 function CASE(c){CASES.push(c);}
 function VREF(v){VREFS.push(v);}
+/* word grammar: nouns (gender, plural), verbs (ja/ty, aspect), adjectives (by rule) */
+const GN={}, GV={}, GA=new Set();
+const gkey=pl=>pl.toLowerCase().replace(/[.,!?…]/g,"").replace(/\s+/g," ").trim();
+function NG(src){lines(src).forEach(l=>{const f=l.split("|"); GN[gkey(f[0])]={g:f[1],pl:(f[2]||"").trim()};});}
+function VG(src){lines(src).forEach(l=>{const f=l.split("|"); GV[gkey(f[0])]={f:f[1],a:(f[2]||"").trim()};});}
+function AG(src){src.trim().split(/\s+/).forEach(x=>GA.add(x));}
+const GLAB={m:"м. р.",ż:"ж. р.",n:"ср. р."};
+function adjForms(a){ if(/[kg]i$/.test(a)) return [a,a.slice(0,-1)+"a",a.slice(0,-1)+"ie"]; if(/i$/.test(a)) return [a,a+"a",a+"e"]; if(/y$/.test(a)) return [a,a.slice(0,-1)+"a",a.slice(0,-1)+"e"]; return null; }
+function gramInfo(w){
+  const k=gkey(w.pl);
+  const n=GN[k];
+  if(n) return n.g==="pl"?`<b>l. mn.</b> только мн. ч.${n.pl?" · "+n.pl:""}`:`<b>${n.g}</b> ${GLAB[n.g]}${n.pl==="—"?" · мн. ч. не употр.":n.pl?` · мн. ч.: ${n.pl}`:""}`;
+  let v=GV[k]; if(!v){const t=k.split(" "); if(t.length>1) v=GV[t.slice(0,2).join(" ")]||GV[t[0]];}
+  if(v){ const perf=v.a.startsWith("ndk"); return `${perf?"<b>dk</b> буд.: ":"<b>ndk</b> "}${v.f}${v.a?` · ${perf?"несов.: "+v.a.slice(4):"сов.: "+v.a.slice(3)}`:""}`; }
+  if(GA.has(k)){const f=adjForms(k); if(f) return `<b>прил.</b> ${f.join(", ")}`;}
+  return "";
+}
+const giHTML=w=>{const g=gramInfo(w); return g?`<small class="ginfo">${g}</small>`:"";};
 /* word trainer topics */
 const WORDS=[];
 function WT(id,pl,ru,src){WORDS.push({id,pl,ru,words:lines(src).map(l=>{const f=l.split("|"); return {id:id+":"+f[0],pl:f[0],ru:f[1],ex:f[2]||"",exr:f[3]||"",t:id};})});}
@@ -1489,7 +1511,7 @@ function renderTopic(){
   head("Słownictwo · тема",t.pl,`${t.ru} · ${t.words.length} слов · выучено ${d}`)+
   `<div class="stack"><div class="row"><button class="btn primary" data-act="wlearn" data-id="${t.id}" ${nw?"":"disabled"}>Учить новые${nw?` (${nw})`:""}</button><button class="btn" data-act="wrev" data-id="${t.id}" ${due?"":"disabled"}>Повторить${due?` (${due})`:""}</button><button class="toggle" data-act="selftest" aria-pressed="false">Скрыть перевод</button></div>
   <div class="legend"><span><i class="dot"></i>новое</span><span><i class="dot learn"></i>учу</span><span><i class="dot done"></i>выучено</span></div>
-  <div id="vlist">${t.words.map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div></div>`;
+  <div id="vlist">${t.words.map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}${giHTML(w)}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div></div>`;
 }
 function startLearn(tid){
   const src=tid==="*"?allWords():wGroup(tid).words;
@@ -1521,7 +1543,7 @@ function renderWSession(){
     if(WS.pos>=WS.pool.length||WS.picked.length>=WS.size) return startDrill();
     const w=WS.pool[WS.pos];
     app.innerHTML=head(`Новые слова · ${tname}`,`Выбрано ${WS.picked.length} из ${WS.size}`,"Знакомое слово отметьте «Уже знаю», незнакомое добавьте в тренировку.")+
-    `<div class="flash"><span class="wtag">${wGroup(w.t).ru}</span><span class="pl">${w.pl}</span>${playBtn(sp(w.pl))}<span class="ru">${w.ru}</span>${w.ex?`<span class="exs"><span class="pl">${w.ex}</span><br>${w.exr}</span>`:""}</div>`;
+    `<div class="flash"><span class="wtag">${wGroup(w.t).ru}</span><span class="pl">${w.pl}</span>${giHTML(w)}${playBtn(sp(w.pl))}<span class="ru">${w.ru}</span>${w.ex?`<span class="exs"><span class="pl">${w.ex}</span><br>${w.exr}</span>`:""}</div>`;
     setBar(`<button class="btn ghost" data-act="wquit">Выйти</button><span class="sp"></span><button class="btn" data-act="wknow">Уже знаю</button><button class="btn primary" data-act="wadd">Учить</button>`);
     setTimeout(()=>say(sp(w.pl)),200);
     return;
@@ -1580,7 +1602,7 @@ function wAnswer(ok,near){
   touch(); save();
   setTimeout(()=>say(sp(w.pl)),120);
   const title=ok?(near?"Почти! Проверьте польские буквы":"Верно!"):"Не совсем";
-  setBar(`<div class="fbt"><b>${title}</b><span><b class="pl">${w.pl}</b> — ${w.ru}</span>${w.ex?`<span class="muted">${w.ex}</span>`:""}</div><button class="btn primary" data-act="wnext">Дальше</button>`,ok?"ok":"bad");
+  setBar(`<div class="fbt"><b>${title}</b><span><b class="pl">${w.pl}</b> — ${w.ru}</span>${gramInfo(w)?`<span class="muted">${gramInfo(w)}</span>`:""}${w.ex?`<span class="muted">${w.ex}</span>`:""}</div><button class="btn primary" data-act="wnext">Дальше</button>`,ok?"ok":"bad");
   barin.querySelector('[data-act="wnext"]')?.focus();
 }
 function finishWS(){
@@ -1859,7 +1881,7 @@ function vLessonWords(el,step,L){
   `<div class="stack"><div class="meter"><div style="width:${Math.round(d/Math.max(1,ws.length)*100)}%"></div></div>
   <div class="row"><button class="btn primary" data-act="wlearn" data-id="L${L.id}" ${nw?"":"disabled"}>Учить слова урока${nw?` (${nw})`:""}</button><button class="btn" data-act="wrev" data-id="L${L.id}" ${due?"":"disabled"}>Повторить${due?` (${due})`:""}</button><button class="toggle" data-act="selftest" aria-pressed="false">Скрыть перевод</button></div>
   <div class="legend"><span><i class="dot"></i>новое</span><span><i class="dot learn"></i>учу</span><span><i class="dot done"></i>выучено</span></div>
-  <div id="vlist" class="stack">${groups.filter(g=>g[1].length).map(g=>`<div class="vgroup"><h3>${g[0]}</h3>${g[1].map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div>`).join("")}</div></div>`;
+  <div id="vlist" class="stack">${groups.filter(g=>g[1].length).map(g=>`<div class="vgroup"><h3>${g[0]}</h3>${g[1].map(w=>`<div class="wrow">${playBtn(sp(w.pl))}<span class="pl">${w.pl}${giHTML(w)}</span><span class="ru">${w.ru}</span><i class="dot ${wStatus(w)}" title="${ST_RU[wStatus(w)]}"></i></div>`).join("")}</div>`).join("")}</div></div>`;
 }
 function boot(){
   buildWordBank();
@@ -5683,6 +5705,978 @@ dlatego|поэтому
 ponieważ|потому что
 mimo to|несмотря на это
 `);
+
+</script>
+<script>/* y_nouns.js */
+/* Noun grammar: word|gender (m, ż, n, pl = only plural)|nominative plural ("—" = no plural in use) */
+NG(`
+kot|m|koty
+ulica|ż|ulice
+centrum|n|centra
+mieszkanie|n|mieszkania
+miasto|n|miasta
+kraj|m|kraje
+adres|m|adresy
+rok|m|lata
+stół|m|stoły
+krzesło|n|krzesła
+szafa|ż|szafy
+lampa|ż|lampy
+okno|n|okna
+drzwi|pl|
+książka|ż|książki
+kubek|m|kubki
+klucz|m|klucze
+torba|ż|torby
+zdjęcie|n|zdjęcia
+kwiatek|m|kwiatki
+przyjaciel|m|przyjaciele
+przyjaciółka|ż|przyjaciółki
+chłopak|m|chłopcy / chłopaki
+dziewczyna|ż|dziewczyny
+programista|m|programiści
+tester|m|testerzy
+lekarz|m|lekarze
+lekarka|ż|lekarki
+nauczyciel|m|nauczyciele
+nauczycielka|ż|nauczycielki
+kierowca|m|kierowcy
+sprzedawca|m|sprzedawcy
+informatyk|m|informatycy
+student|m|studenci
+studentka|ż|studentki
+szef|m|szefowie
+szefowa|ż|szefowe
+praca|ż|prace
+biuro|n|biura
+fotografia|ż|fotografie
+góry|pl|ед. ч. góra
+piłka|ż|piłki
+tenis|m|—
+szachy|pl|
+gitara|ż|gitary
+taniec|m|tańce
+hobby|n|hobby (не склоняется)
+chleb|m|chleby
+bułka|ż|bułki
+mleko|n|—
+masło|n|—
+ser|m|sery
+jajko|n|jajka
+kawa|ż|kawy
+herbata|ż|herbaty
+woda|ż|wody
+sok|m|soki
+sklep|m|sklepy
+karta|ż|karty
+gotówka|ż|—
+śniadanie|n|śniadania
+obiad|m|obiady
+kolacja|ż|kolacje
+kanapka|ż|kanapki
+jajecznica|ż|jajecznice
+zupa|ż|zupy
+mięso|n|—
+ryba|ż|ryby
+szynka|ż|szynki
+makaron|m|makarony
+cukier|m|—
+cytryna|ż|cytryny
+pomidor|m|pomidory
+ogórek|m|ogórki
+ziemniak|m|ziemniaki
+marchewka|ż|marchewki
+cebula|ż|cebule
+kapusta|ż|kapusty
+papryka|ż|papryki
+jabłko|n|jabłka
+gruszka|ż|gruszki
+truskawka|ż|truskawki
+malina|ż|maliny
+banan|m|banany
+śliwka|ż|śliwki
+targ|m|targi
+kilo|n|kilo (не склоняется)
+restauracja|ż|restauracje
+kelner|m|kelnerzy
+rachunek|m|rachunki
+napiwek|m|napiwki
+pierogi|pl|ед. ч. pieróg
+żurek|m|żurki
+surówka|ż|surówki
+kompot|m|kompoty
+grzyby|pl|ед. ч. grzyb
+deser|m|desery
+czas|m|czasy
+rodzina|ż|rodziny
+rodzice|pl|
+mama|ż|mamy
+tata|m|tatowie
+brat|m|bracia
+siostra|ż|siostry
+rodzeństwo|n|—
+dziadek|m|dziadkowie
+babcia|ż|babcie
+syn|m|synowie
+mąż|m|mężowie
+żona|ż|żony
+dziecko|n|dzieci
+godzina|ż|godziny
+minuta|ż|minuty
+tydzień|m|tygodnie
+weekend|m|weekendy
+poniedziałek|m|poniedziałki
+wtorek|m|wtorki
+środa|ż|środy
+czwartek|m|czwartki
+piątek|m|piątki
+sobota|ż|soboty
+niedziela|ż|niedziele
+spotkanie|n|spotkania
+kino|n|kina
+zoo|n|zoo (не склоняется)
+klub|m|kluby
+wycieczka|ż|wycieczki
+rynek|m|rynki
+ratusz|m|ratusze
+kościół|m|kościoły
+most|m|mosty
+skrzyżowanie|n|skrzyżowania
+przystanek|m|przystanki
+dworzec|m|dworce
+tramwaj|m|tramwaje
+autobus|m|autobusy
+pociąg|m|pociągi
+samochód|m|samochody
+rower|m|rowery
+poczta|ż|poczty
+paczka|ż|paczki
+list|m|listy
+koperta|ż|koperty
+znaczek|m|znaczki
+formularz|m|formularze
+butelka|ż|butelki
+puszka|ż|puszki
+słoik|m|słoiki
+karton|m|kartony
+opakowanie|n|opakowania
+pudełko|n|pudełka
+prezent|m|prezenty
+pogoda|ż|—
+słońce|n|—
+deszcz|m|deszcze
+śnieg|m|—
+wiatr|m|wiatry
+chmura|ż|chmury
+burza|ż|burze
+wiosna|ż|wiosny
+lato|n|lata
+jesień|ż|jesienie
+zima|ż|zimy
+kurtka|ż|kurtki
+czapka|ż|czapki
+parasol|m|parasole
+prognoza|ż|prognozy
+zdanie|n|zdania
+film|m|filmy
+aktor|m|aktorzy
+aktorka|ż|aktorki
+bilet|m|bilety
+koniec|m|końce
+pokój|m|pokoje
+kuchnia|ż|kuchnie
+łazienka|ż|łazienki
+sypialnia|ż|sypialnie
+salon|m|salony
+przedpokój|m|przedpokoje
+balkon|m|balkony
+lodówka|ż|lodówki
+czajnik|m|czajniki
+zlew|m|zlewy
+szafka|ż|szafki
+półka|ż|półki
+kuchenka|ż|kuchenki
+kanapa|ż|kanapy
+fotel|m|fotele
+biurko|n|biurka
+dywan|m|dywany
+lustro|n|lustra
+ogłoszenie|n|ogłoszenia
+czynsz|m|czynsze
+media|pl|
+kaucja|ż|kaucje
+umowa|ż|umowy
+właściciel|m|właściciele
+piętro|n|piętra
+parter|m|—
+winda|ż|windy
+schody|pl|
+dzielnica|ż|dzielnice
+sąsiad|m|sąsiedzi
+peron|m|perony
+kasa|ż|kasy
+odjazd|m|odjazdy
+przyjazd|m|przyjazdy
+opóźnienie|n|opóźnienia
+przesiadka|ż|przesiadki
+podróż|ż|podróże
+wakacje|pl|
+morze|n|morza
+jezioro|n|jeziora
+zamek|m|zamki
+północ|ż|—
+południe|n|—
+wschód|m|—
+zachód|m|—
+urodziny|pl|
+imieniny|pl|
+święto|n|święta
+życzenia|pl|
+kwiaty|pl|ед. ч. kwiat
+bukiet|m|bukiety
+róża|ż|róże
+tort|m|torty
+gratulacje|pl|
+data|ż|daty
+telefon|m|telefony
+rozmowa|ż|rozmowy
+wiadomość|ż|wiadomości
+SMS|m|SMS-y
+chwila|ż|chwile
+plan|m|plany
+sałatka|ż|sałatki
+płaszcz|m|płaszcze
+sweter|m|swetry
+koszula|ż|koszule
+koszulka|ż|koszulki
+spodnie|pl|
+dżinsy|pl|
+sukienka|ż|sukienki
+spódnica|ż|spódnice
+buty|pl|ед. ч. but
+szalik|m|szaliki
+rękawiczki|pl|ед. ч. rękawiczka
+rozmiar|m|rozmiary
+przymierzalnia|ż|przymierzalnie
+zdrowie|n|—
+choroba|ż|choroby
+przeziębienie|n|przeziębienia
+gorączka|ż|—
+katar|m|—
+kaszel|m|—
+ból|m|bóle
+przychodnia|ż|przychodnie
+recepta|ż|recepty
+apteka|ż|apteki
+lekarstwo|n|lekarstwa
+tabletka|ż|tabletki
+głowa|ż|głowy
+gardło|n|gardła
+brzuch|m|brzuchy
+plecy|pl|
+sprawa|ż|sprawy
+reklamacja|ż|reklamacje
+paragon|m|paragony
+gwarancja|ż|gwarancje
+naprawa|ż|naprawy
+słuchawki|pl|ед. ч. słuchawka
+ładowarka|ż|ładowarki
+bateria|ż|baterie
+model|m|modele
+życiorys|m|życiorysy
+dzieciństwo|n|—
+studia|pl|
+politechnika|ż|politechniki
+uniwersytet|m|uniwersytety
+oferta|ż|oferty
+CV|n|CV (не склоняется)
+doświadczenie|n|doświadczenia
+umiejętności|pl|ед. ч. umiejętność
+pensja|ż|pensje
+zespół|m|zespoły
+kierownik|m|kierownicy
+firma|ż|firmy
+etat|m|etaty
+urząd|m|urzędy
+urzędnik|m|urzędnicy
+kolejka|ż|kolejki
+numerek|m|numerki
+okienko|n|okienka
+termin|m|terminy
+decyzja|ż|decyzje
+wniosek|m|wnioski
+dokument|m|dokumenty
+paszport|m|paszporty
+zaświadczenie|n|zaświadczenia
+podpis|m|podpisy
+opłata|ż|opłaty
+przelew|m|przelewy
+bank|m|banki
+konto|n|konta
+bankomat|m|bankomaty
+wpłata|ż|wpłaty
+wypłata|ż|wypłaty
+prowizja|ż|prowizje
+odsetki|pl|
+kredyt|m|kredyty
+aplikacja|ż|aplikacje
+pieniądze|pl|
+sport|m|sporty
+siłownia|ż|siłownie
+ćwiczenia|pl|ед. ч. ćwiczenie
+rozgrzewka|ż|rozgrzewki
+sen|m|sny
+dieta|ż|diety
+stres|m|stresy
+Wigilia|ż|—
+święta|pl|ед. ч. święto
+choinka|ż|choinki
+kolęda|ż|kolędy
+opłatek|m|opłatki
+gwiazdka|ż|gwiazdki
+barszcz|m|—
+karp|m|karpie
+makowiec|m|makowce
+Sylwester|m|—
+Wielkanoc|ż|—
+pisanka|ż|pisanki
+tradycja|ż|tradycje
+mail|m|maile
+odpowiedź|ż|odpowiedzi
+temat|m|tematy
+załącznik|m|załączniki
+nadawca|m|nadawcy
+odbiorca|m|odbiorcy
+spóźnienie|n|spóźnienia
+spacer|m|spacery
+droga|ż|drogi
+korek|m|korki
+objazd|m|objazdy
+autostrada|ż|autostrady
+pasażer|m|pasażerowie
+bagażnik|m|bagażniki
+mandat|m|mandaty
+plaża|ż|plaże
+piasek|m|—
+fala|ż|fale
+molo|n|mola
+port|m|porty
+statek|m|statki
+mewa|ż|mewy
+urlop|m|urlopy
+kurort|m|kurorty
+ratownik|m|ratownicy
+szczyt|m|szczyty
+szlak|m|szlaki
+schronisko|n|schroniska
+dolina|ż|doliny
+wędrówka|ż|wędrówki
+turysta|m|turyści
+plecak|m|plecaki
+mapa|ż|mapy
+Polak|m|Polacy
+Polka|ż|Polki
+Ukrainiec|m|Ukraińcy
+Ukrainka|ż|Ukrainki
+Białorusin|m|Białorusini
+Hiszpan|m|Hiszpanie
+Niemiec|m|Niemcy
+Francuz|m|Francuzi
+Anglik|m|Anglicy
+cudzoziemiec|m|cudzoziemcy
+kultura|ż|kultury
+stereotyp|m|stereotypy
+język|m|języki
+obywatelstwo|n|obywatelstwa
+ludzie|pl|ед. ч. człowiek
+kolega|m|koledzy
+koleżanka|ż|koleżanki
+chłopaki|pl|ед. ч. chłopak
+dziewczyny|pl|ед. ч. dziewczyna
+awans|m|awanse
+system|m|systemy
+kradzież|ż|kradzieże
+złodziej|m|złodzieje
+policja|ż|—
+komisariat|m|komisariaty
+świadek|m|świadkowie
+wypadek|m|wypadki
+pomoc|ż|—
+portfel|m|portfele
+klucze|pl|ед. ч. klucz
+dowód|m|dowody
+włosy|pl|ед. ч. włos
+broda|ż|brody
+okulary|pl|
+uczucie|n|uczucia
+miłość|ż|miłości
+przyjaźń|ż|przyjaźnie
+ślub|m|śluby
+powieść|ż|powieści
+wiersz|m|wiersze
+poezja|ż|—
+autor|m|autorzy
+autorka|ż|autorki
+teatr|m|teatry
+wystawa|ż|wystawy
+muzeum|n|muzea
+przepis|m|przepisy
+składniki|pl|ед. ч. składnik
+mąka|ż|—
+sól|ż|—
+pieprz|m|—
+olej|m|oleje
+twaróg|m|—
+śmietana|ż|—
+czosnek|m|—
+garnek|m|garnki
+patelnia|ż|patelnie
+piekarnik|m|piekarniki
+szklanka|ż|szklanki
+łyżka|ż|łyżki
+szczypta|ż|szczypty
+marzenie|n|marzenia
+loteria|ż|loterie
+los|m|losy
+milion|m|miliony
+szczęście|n|—
+pech|m|—
+świat|m|światy
+egzamin|m|egzaminy
+certyfikat|m|certyfikaty
+wynik|m|wyniki
+impreza|ż|imprezy
+toast|m|toasty
+sukces|m|sukcesy
+cel|m|cele
+punkt|m|punkty
+poziom|m|poziomy
+połowa|ż|połowy
+dzień|m|dni
+wieczór|m|wieczory
+popołudnie|n|popołudnia
+miesiąc|m|miesiące
+sekunda|ż|sekundy
+styczeń|m|—
+luty|m|—
+marzec|m|—
+kwiecień|m|—
+maj|m|—
+czerwiec|m|—
+lipiec|m|—
+sierpień|m|—
+wrzesień|m|—
+październik|m|—
+listopad|m|—
+grudzień|m|—
+człowiek|m|ludzie
+mężczyzna|m|mężczyźni
+kobieta|ż|kobiety
+chłopiec|m|chłopcy
+dziewczynka|ż|dziewczynki
+ojciec|m|ojcowie
+matka|ż|matki
+wnuk|m|wnukowie
+wnuczka|ż|wnuczki
+wujek|m|wujkowie
+ciocia|ż|ciocie
+kuzyn|m|kuzyni
+narzeczony|m|narzeczeni
+teść|m|teściowie
+wąsy|pl|
+oczy|pl|ед. ч. oko
+twarz|ż|twarze
+uśmiech|m|uśmiechy
+strach|m|—
+radość|ż|radości
+smutek|m|—
+złość|ż|—
+dom|m|domy
+toaleta|ż|toalety
+piwnica|ż|piwnice
+strych|m|strychy
+ogród|m|ogrody
+ściana|ż|ściany
+podłoga|ż|podłogi
+sufit|m|sufity
+dach|m|dachy
+kamienica|ż|kamienice
+blok|m|bloki
+sąsiedztwo|n|—
+zasłony|pl|ед. ч. zasłona
+poduszka|ż|poduszki
+kołdra|ż|kołdry
+ręcznik|m|ręczniki
+mydło|n|mydła
+prysznic|m|prysznice
+wanna|ż|wanny
+pralka|ż|pralki
+odkurzacz|m|odkurzacze
+żelazko|n|żelazka
+telewizor|m|telewizory
+zegar|m|zegary
+obraz|m|obrazy
+śmieci|pl|
+łóżko|n|łóżka
+zamrażarka|ż|zamrażarki
+mikrofalówka|ż|mikrofalówki
+zmywarka|ż|zmywarki
+talerz|m|talerze
+miska|ż|miski
+filiżanka|ż|filiżanki
+kieliszek|m|kieliszki
+łyżeczka|ż|łyżeczki
+widelec|m|widelce
+nóż|m|noże
+jedzenie|n|—
+kiełbasa|ż|kiełbasy
+kurczak|m|kurczaki
+wołowina|ż|—
+wieprzowina|ż|—
+ryż|m|—
+kasza|ż|kasze
+ziemniaki|pl|ед. ч. ziemniak
+naleśniki|pl|ед. ч. naleśnik
+ciasto|n|ciasta
+ciastko|n|ciastka
+czekolada|ż|czekolady
+przekąska|ż|przekąski
+piwo|n|piwa
+wino|n|wina
+wódka|ż|wódki
+napój|m|napoje
+lemoniada|ż|lemoniady
+kakao|n|—
+owoc|m|owoce
+warzywo|n|warzywa
+wiśnia|ż|wiśnie
+czereśnia|ż|czereśnie
+borówka|ż|borówki
+pomarańcza|ż|pomarańcze
+winogrona|pl|
+arbuz|m|arbuzy
+brzoskwinia|ż|brzoskwinie
+sałata|ż|sałaty
+burak|m|buraki
+fasola|ż|—
+groszek|m|—
+supermarket|m|supermarkety
+koszyk|m|koszyki
+wózek|m|wózki
+reklamówka|ż|reklamówki
+cena|ż|ceny
+promocja|ż|promocje
+rabat|m|rabaty
+grosz|m|grosze
+reszta|ż|—
+ubranie|n|ubrania
+bluza|ż|bluzy
+marynarka|ż|marynarki
+garnitur|m|garnitury
+kapelusz|m|kapelusze
+skarpetki|pl|ед. ч. skarpetka
+majtki|pl|
+piżama|ż|piżamy
+sandały|pl|ед. ч. sandał
+kozaki|pl|ед. ч. kozak
+adidasy|pl|ед. ч. adidas
+pasek|m|paski
+krawat|m|krawaty
+torebka|ż|torebki
+ciało|n|ciała
+oko|n|oczy
+ucho|n|uszy
+nos|m|nosy
+usta|pl|
+ząb|m|zęby
+szyja|ż|szyje
+ramię|n|ramiona
+ręka|ż|ręce
+palec|m|palce
+serce|n|serca
+noga|ż|nogi
+kolano|n|kolana
+stopa|ż|stopy
+skóra|ż|skóry
+grypa|ż|—
+dentysta|m|dentyści
+szpital|m|szpitale
+karetka|ż|karetki
+wieś|ż|wsie
+plac|m|place
+park|m|parki
+rzeka|ż|rzeki
+biblioteka|ż|biblioteki
+szkoła|ż|szkoły
+kawiarnia|ż|kawiarnie
+hotel|m|hotele
+lotnisko|n|lotniska
+chodnik|m|chodniki
+światła|pl|ед. ч. światło
+budynek|m|budynki
+zabytek|m|zabytki
+pomnik|m|pomniki
+metro|n|—
+taksówka|ż|taksówki
+hulajnoga|ż|hulajnogi
+motor|m|motory
+samolot|m|samoloty
+linia|ż|linie
+parking|m|parkingi
+walizka|ż|walizki
+bagaż|m|bagaże
+rezerwacja|ż|rezerwacje
+nocleg|m|noclegi
+hostel|m|hostele
+recepcja|ż|recepcje
+odprawa|ż|odprawy
+lot|m|loty
+granica|ż|granice
+przewodnik|m|przewodnicy (люди) / przewodniki (книги)
+pamiątka|ż|pamiątki
+pracownik|m|pracownicy
+klient|m|klienci
+zebranie|n|zebrania
+zawód|m|zawody
+pielęgniarka|ż|pielęgniarki
+inżynier|m|inżynierowie
+prawnik|m|prawnicy
+kucharz|m|kucharze
+policjant|m|policjanci
+strażak|m|strażacy
+fryzjer|m|fryzjerzy
+księgowy|m|księgowi
+dziennikarz|m|dziennikarze
+architekt|m|architekci
+budowlaniec|m|budowlańcy
+emeryt|m|emeryci
+uczeń|m|uczniowie
+lekcja|ż|lekcje
+zajęcia|pl|
+kurs|m|kursy
+klasa|ż|klasy
+przerwa|ż|przerwy
+ćwiczenie|n|ćwiczenia
+test|m|testy
+ocena|ż|oceny
+zeszyt|m|zeszyty
+długopis|m|długopisy
+ołówek|m|ołówki
+słownik|m|słowniki
+podręcznik|m|podręczniki
+tablica|ż|tablice
+pytanie|n|pytania
+błąd|m|błędy
+wiza|ż|wizy
+zameldowanie|n|—
+kopia|ż|kopie
+ubezpieczenie|n|ubezpieczenia
+podatek|m|podatki
+komputer|m|komputery
+laptop|m|laptopy
+komórka|ż|komórki
+tablet|m|tablety
+klawiatura|ż|klawiatury
+myszka|ż|myszki
+ekran|m|ekrany
+internet|m|—
+hasło|n|hasła
+plik|m|pliki
+wifi|n|—
+zasięg|m|—
+muzyka|ż|—
+serial|m|seriale
+koncert|m|koncerty
+koszykówka|ż|—
+siatkówka|ż|—
+pływanie|n|—
+bieganie|n|—
+narty|pl|
+łyżwy|pl|
+joga|ż|—
+basen|m|baseny
+boisko|n|boiska
+stadion|m|stadiony
+drużyna|ż|drużyny
+mecz|m|mecze
+trener|m|trenerzy
+zawodnik|m|zawodnicy
+kibic|m|kibice
+remis|m|remisy
+gol|m|gole
+mgła|ż|mgły
+lód|m|—
+tęcza|ż|tęcze
+temperatura|ż|temperatury
+stopień|m|stopnie
+przyroda|ż|—
+las|m|lasy
+drzewo|n|drzewa
+kwiat|m|kwiaty
+trawa|ż|trawy
+góra|ż|góry
+niebo|n|—
+gwiazda|ż|gwiazdy
+księżyc|m|księżyce
+zwierzę|n|zwierzęta
+pies|m|psy
+ptak|m|ptaki
+koń|m|konie
+krowa|ż|krowy
+świnia|ż|świnie
+owca|ż|owce
+kura|ż|kury
+kaczka|ż|kaczki
+mysz|ż|myszy
+królik|m|króliki
+chomik|m|chomiki
+papuga|ż|papugi
+wilk|m|wilki
+lis|m|lisy
+niedźwiedź|m|niedźwiedzie
+zając|m|zające
+jeż|m|jeże
+wiewiórka|ż|wiewiórki
+żaba|ż|żaby
+wąż|m|węże
+motyl|m|motyle
+pszczoła|ż|pszczoły
+komar|m|komary
+słoń|m|słonie
+lew|m|lwy
+małpa|ż|małpy
+żyrafa|ż|żyrafy
+rocznica|ż|rocznice
+wesele|n|wesela
+kartka|ż|kartki
+świeczka|ż|świeczki
+pączek|m|pączki
+zaproszenie|n|zaproszenia
+noc|ż|noce
+pieczątka|ż|pieczątki
+stanowisko|n|stanowiska
+gość|m|goście
+młodość|ż|—
+tor|m|tory
+córka|ż|córki
+Andrzejki|pl|
+złoty|m|złote
+schabowy|m|schabowe
+`);
+
+</script>
+<script>/* y_verbs.js */
+/* Verb grammar: infinitive|forms "ja, ty"|aspect partner: "dk X" = perfective partner, "ndk X" = this verb is perfective (its forms mean future) */
+VG(`
+być|jestem, jesteś|
+mieć|mam, masz|
+móc|mogę, możesz|
+musieć|muszę, musisz|
+chcieć|chcę, chcesz|
+wiedzieć|wiem, wiesz|
+umieć|umiem, umiesz|
+znać|znam, znasz|
+mieszkać|mieszkam, mieszkasz|dk zamieszkać
+mówić|mówię, mówisz|dk powiedzieć
+powiedzieć|powiem, powiesz|ndk mówić
+robić|robię, robisz|dk zrobić
+lubić|lubię, lubisz|dk polubić
+myśleć|myślę, myślisz|dk pomyśleć
+uczyć się|uczę się, uczysz się|dk nauczyć się
+nauczyć się|nauczę się, nauczysz się|ndk uczyć się
+słyszeć|słyszę, słyszysz|dk usłyszeć
+widzieć|widzę, widzisz|dk zobaczyć
+patrzeć|patrzę, patrzysz|dk popatrzeć
+interesować się|interesuję się, interesujesz się|dk zainteresować się
+czytać|czytam, czytasz|dk przeczytać
+pisać|piszę, piszesz|dk napisać
+tańczyć|tańczę, tańczysz|dk zatańczyć
+gotować|gotuję, gotujesz|dk ugotować
+rysować|rysuję, rysujesz|dk narysować
+malować|maluję, malujesz|dk namalować
+śpiewać|śpiewam, śpiewasz|dk zaśpiewać
+grać|gram, grasz|dk zagrać
+pływać|pływam, pływasz|
+biegać|biegam, biegasz|
+kupować|kupuję, kupujesz|dk kupić
+kupić|kupię, kupisz|ndk kupować
+sprzedać|sprzedam, sprzedasz|ndk sprzedawać
+kosztować|kosztuje, kosztują (3 л.)|
+płacić|płacę, płacisz|dk zapłacić
+jeść|jem, jesz|dk zjeść
+pić|piję, pijesz|dk wypić
+zamawiać|zamawiam, zamawiasz|dk zamówić
+dzwonić|dzwonię, dzwonisz|dk zadzwonić
+oddzwonić|oddzwonię, oddzwonisz|ndk oddzwaniać
+spotkać się|spotkam się, spotkasz się|ndk spotykać się
+spotykać się|spotykam się, spotykasz się|dk spotkać się
+pasować|pasuję, pasujesz|
+spać|śpię, śpisz|
+oglądać|oglądam, oglądasz|dk obejrzeć
+iść|idę, idziesz|dk pójść
+pójść|pójdę, pójdziesz|ndk iść
+chodzić|chodzę, chodzisz|
+jechać|jadę, jedziesz|dk pojechać
+pojechać|pojadę, pojedziesz|ndk jechać
+jeździć|jeżdżę, jeździsz|
+odpoczywać|odpoczywam, odpoczywasz|dk odpocząć
+zgubić|zgubię, zgubisz|ndk gubić
+zgubić się|zgubię się, zgubisz się|ndk gubić się
+wysłać|wyślę, wyślesz|ndk wysyłać
+przesłać|prześlę, prześlesz|ndk przesyłać
+odebrać|odbiorę, odbierzesz|ndk odbierać
+zgadzać się|zgadzam się, zgadzasz się|dk zgodzić się
+podobać się|podobam się, podobasz się|dk spodobać się
+stać|stoję, stoisz|
+leżeć|leżę, leżysz|
+siedzieć|siedzę, siedzisz|
+wynająć|wynajmę, wynajmiesz|ndk wynajmować
+zwiedzać|zwiedzam, zwiedzasz|dk zwiedzić
+woleć|wolę, wolisz|
+urodzić się|urodzę się, urodzisz się|ndk rodzić się
+pamiętać|pamiętam, pamiętasz|dk zapamiętać
+zapominać|zapominam, zapominasz|dk zapomnieć
+zapomnieć|zapomnę, zapomnisz|ndk zapominać
+znaleźć|znajdę, znajdziesz|ndk znajdować
+szukać|szukam, szukasz|dk poszukać
+sprawdzić|sprawdzę, sprawdzisz|ndk sprawdzać
+przynieść|przyniosę, przyniesiesz|ndk przynosić
+zabrać|zabiorę, zabierzesz|ndk zabierać
+brać|biorę, bierzesz|dk wziąć
+wziąć|wezmę, weźmiesz|ndk brać
+dać|dam, dasz|ndk dawać
+oddać|oddam, oddasz|ndk oddawać
+grillować|grilluję, grillujesz|
+piec|piekę, pieczesz|dk upiec
+upiec|upiekę, upieczesz|ndk piec
+smażyć|smażę, smażysz|dk usmażyć
+kroić|kroję, kroisz|dk pokroić
+mieszać|mieszam, mieszasz|dk wymieszać
+dodać|dodam, dodasz|ndk dodawać
+przymierzyć|przymierzę, przymierzysz|ndk przymierzać
+nosić|noszę, nosisz|
+wyglądać|wyglądam, wyglądasz|
+boleć|boli, bolą (3 л.)|
+wymienić|wymienię, wymienisz|ndk wymieniać
+działać|działa, działają (3 л.)|
+pomóc|pomogę, pomożesz|ndk pomagać
+pomagać|pomagam, pomagasz|dk pomóc
+przeszkadzać|przeszkadzam, przeszkadzasz|dk przeszkodzić
+studiować|studiuję, studiujesz|
+skończyć|skończę, skończysz|ndk kończyć
+zacząć|zacznę, zaczniesz|ndk zaczynać
+przeprowadzić się|przeprowadzę się, przeprowadzisz się|ndk przeprowadzać się
+dostać|dostanę, dostaniesz|ndk dostawać
+spróbować|spróbuję, spróbujesz|ndk próbować
+zostać|zostanę, zostaniesz|ndk zostawać
+podpisać|podpiszę, podpiszesz|ndk podpisywać
+oszczędzać|oszczędzam, oszczędzasz|dk zaoszczędzić
+pożyczyć|pożyczę, pożyczysz|ndk pożyczać
+pożyczać|pożyczam, pożyczasz|dk pożyczyć
+wydawać|wydaję, wydajesz|dk wydać
+wydać|wydam, wydasz|ndk wydawać
+zwrócić|zwrócę, zwrócisz|ndk zwracać
+dziękować|dziękuję, dziękujesz|dk podziękować
+ufać|ufam, ufasz|dk zaufać
+ćwiczyć|ćwiczę, ćwiczysz|
+oddychać|oddycham, oddychasz|
+wysypiać się|wysypiam się, wysypiasz się|dk wyspać się
+odżywiać się|odżywiam się, odżywiasz się|
+unikać|unikam, unikasz|dk uniknąć
+wstawać|wstaję, wstajesz|dk wstać
+budzić się|budzę się, budzisz się|dk obudzić się
+życzyć|życzę, życzysz|
+pozdrawiać|pozdrawiam, pozdrawiasz|dk pozdrowić
+wracać|wracam, wracasz|dk wrócić
+wrócić|wrócę, wrócisz|ndk wracać
+odpisać|odpiszę, odpiszesz|ndk odpisywać
+przyjść|przyjdę, przyjdziesz|ndk przychodzić
+przychodzić|przychodzę, przychodzisz|dk przyjść
+wyjść|wyjdę, wyjdziesz|ndk wychodzić
+wychodzić|wychodzę, wychodzisz|dk wyjść
+wejść|wejdę, wejdziesz|ndk wchodzić
+wchodzić|wchodzę, wchodzisz|dk wejść
+przejść|przejdę, przejdziesz|ndk przechodzić
+dojść|dojdę, dojdziesz|ndk dochodzić
+odejść|odejdę, odejdziesz|ndk odchodzić
+podejść|podejdę, podejdziesz|ndk podchodzić
+zejść|zejdę, zejdziesz|ndk schodzić
+spóźnić się|spóźnię się, spóźnisz się|ndk spóźniać się
+spóźniać się|spóźniam się, spóźniasz się|dk spóźnić się
+przyjechać|przyjadę, przyjedziesz|ndk przyjeżdżać
+wyjechać|wyjadę, wyjedziesz|ndk wyjeżdżać
+dojechać|dojadę, dojedziesz|ndk dojeżdżać
+odjechać|odjadę, odjedziesz|ndk odjeżdżać
+przejechać|przejadę, przejedziesz|ndk przejeżdżać
+zjechać|zjadę, zjedziesz|ndk zjeżdżać
+objechać|objadę, objedziesz|ndk objeżdżać
+wsiąść|wsiądę, wsiądziesz|ndk wsiadać
+wysiąść|wysiądę, wysiądziesz|ndk wysiadać
+zatankować|zatankuję, zatankujesz|ndk tankować
+opalać się|opalam się, opalasz się|dk opalić się
+narzekać|narzekam, narzekasz|
+stać się|stanę się, staniesz się|ndk stawać się
+ukraść|ukradnę, ukradniesz|ndk kraść
+zgłosić|zgłoszę, zgłosisz|ndk zgłaszać
+brakować|brakuje (3 л.)|dk zabraknąć
+tęsknić|tęsknię, tęsknisz|
+czuć się|czuję się, czujesz się|dk poczuć się
+kochać|kocham, kochasz|
+zakochać się|zakocham się, zakochasz się|ndk zakochiwać się
+pokłócić się|pokłócę się, pokłócisz się|ndk kłócić się
+pogodzić się|pogodzę się, pogodzisz się|ndk godzić się
+pytać|pytam, pytasz|dk zapytać
+zapytać|zapytam, zapytasz|ndk pytać
+odpowiadać|odpowiadam, odpowiadasz|dk odpowiedzieć
+odpowiedzieć|odpowiem, odpowiesz|ndk odpowiadać
+poprosić|poproszę, poprosisz|ndk prosić
+obiecać|obiecam, obiecasz|ndk obiecywać
+wyjaśnić|wyjaśnię, wyjaśnisz|ndk wyjaśniać
+rozumieć|rozumiem, rozumiesz|dk zrozumieć
+płakać|płaczę, płaczesz|
+marzyć|marzę, marzysz|
+wygrać|wygram, wygrasz|ndk wygrywać
+przegrać|przegram, przegrasz|ndk przegrywać
+podzielić się|podzielę się, podzielisz się|ndk dzielić się
+powtarzać|powtarzam, powtarzasz|dk powtórzyć
+powtórzyć|powtórzę, powtórzysz|ndk powtarzać
+zdać|zdam, zdasz|ndk zdawać
+oblać|obleję, oblejesz|ndk oblewać
+świętować|świętuję, świętujesz|
+mylić|mylę, mylisz|dk pomylić
+bać się|boję się, boisz się|
+cieszyć się|cieszę się, cieszysz się|dk ucieszyć się
+martwić się|martwię się, martwisz się|
+denerwować się|denerwuję się, denerwujesz się|dk zdenerwować się
+śmiać się|śmieję się, śmiejesz się|dk zaśmiać się
+nudzić się|nudzę się, nudzisz się|
+ubierać się|ubieram się, ubierasz się|dk ubrać się
+ubrać się|ubiorę się, ubierzesz się|ndk ubierać się
+myć się|myję się, myjesz się|dk umyć się
+wypełnić|wypełnię, wypełnisz|ndk wypełniać
+złożyć|złożę, złożysz|ndk składać
+pobrać|pobiorę, pobierzesz|ndk pobierać
+zalogować się|zaloguję się, zalogujesz się|ndk logować się
+wylogować się|wyloguję się, wylogujesz się|ndk wylogowywać się
+włączać|włączam, włączasz|dk włączyć
+włączyć|włączę, włączysz|ndk włączać
+wyłączać|wyłączam, wyłączasz|dk wyłączyć
+wyłączyć|wyłączę, wyłączysz|ndk wyłączać
+zepsuć się|zepsuję się, zepsujesz się|ndk psuć się
+podróżować|podróżuję, podróżujesz|
+zbierać|zbieram, zbierasz|dk zebrać
+czekać|czekam, czekasz|dk poczekać
+potrzebować|potrzebuję, potrzebujesz|
+sprzątać|sprzątam, sprzątasz|dk posprzątać
+prać|piorę, pierzesz|dk wyprać
+pracować|pracuję, pracujesz|
+otwierać|otwieram, otwierasz|dk otworzyć
+zamykać|zamykam, zamykasz|dk zamknąć
+spieszyć się|spieszę się, spieszysz się|dk pospieszyć się
+`);
+
+/* Adjectives: forms are built by rule (nowy → nowa, nowe; drogi → droga, drogie; tani → tania, tanie) */
+AG(`nowy leniwy mały stary duży ładny jasny ulubiony wysoki niski młody wesoły spokojny mądry zabawny tani drogi głodny świeży słodki kwaśny świetny nudny ciekawy długi krótki smutny najlepszy chory zepsuty wdzięczny wspaniały kreatywny zorganizowany darmowy zdrowy gościnny bezpośredni podobny zdziwiony szczęśliwy samotny zazdrosny własny dumny gruby szczupły chudy piękny przystojny brzydki łysy miły sympatyczny inteligentny głupi nerwowy cierpliwy niecierpliwy pracowity odważny nieśmiały szczery uczciwy uprzejmy niegrzeczny hojny skąpy otwarty punktualny zadowolony zmęczony zdenerwowany zły zaskoczony przestraszony zakochany smaczny spragniony dojrzały dobry szybki wolny łatwy trudny ciężki lekki ciepły zimny gorący czysty brudny pełny pusty ważny możliwy gotowy zajęty głośny cichy czerwony pomarańczowy żółty zielony niebieski granatowy fioletowy różowy brązowy szary biały czarny pyszny pierwszy drugi trzeci który jaki bezrobotny znajomy ciekawy`);
 
 </script>
 <script>/* z_book.js */
