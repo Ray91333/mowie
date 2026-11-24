@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <title>Mówię: обложка</title>
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@700&amp;family=Onest:wght@500&amp;display=swap');
+      .wm{font-family:Unbounded,'Arial Black',sans-serif;font-weight:700}
+      .tx{font-family:Onest,'Segoe UI',Arial,sans-serif;font-weight:500}
+      .lt{font-family:Unbounded,'Arial Black',sans-serif;font-weight:700;text-anchor:middle;dominant-baseline:central}</style>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2A4CC4"/>
+      <stop offset="1" stop-color="#101E66"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect y="852" width="1600" height="48" fill="#E5323F"/>
+  <rect y="836" width="1600" height="16" fill="#FFFFFF"/>
+
+  <!-- icon -->
+  <g transform="translate(120 170) scale(0.42)">
+    <rect width="512" height="512" rx="120" fill="#FFFFFF" fill-opacity=".12"/>
+    <circle cx="256" cy="300" r="138" fill="#FFFFFF"/>
+    <path d="M150 352 L98 452 L222 418 Z" fill="#FFFFFF"/>
+    <circle cx="256" cy="300" r="66" fill="#1D3AA6"/>
+    <path d="M248 140 L318 44 L378 76 L298 156 Z" fill="#E5323F"/>
+  </g>
+
+  <text class="wm" x="116" y="530" font-size="190" fill="#FFFFFF">Mówi<tspan fill="#FF5A66">ę</tspan></text>
+  <text class="tx" x="122" y="620" font-size="46" fill="#FFFFFF">Польский с нуля до уровня A1</text>
+  <text class="tx" x="122" y="684" font-size="32" fill="#C9D3FF">26 уроков · алфавит · грамматика · живые диалоги</text>
+
+  <!-- letter bubbles -->
+  <g>
+    <circle cx="1180" cy="230" r="92" fill="#FFFFFF"/><text class="lt" x="1180" y="232" font-size="96" fill="#1D3AA6">ą</text>
+    <circle cx="1380" cy="330" r="74" fill="#E5323F"/><text class="lt" x="1380" y="332" font-size="76" fill="#FFFFFF">ł</text>
+    <circle cx="1210" cy="450" r="62" fill="#FFFFFF" fill-opacity=".16"/><text class="lt" x="1210" y="452" font-size="62" fill="#FFFFFF">ś</text>
+    <circle cx="1430" cy="540" r="96" fill="#FFFFFF"/><text class="lt" x="1430" y="542" font-size="100" fill="#E5323F">ę</text>
+    <circle cx="1150" cy="640" r="70" fill="#E5323F"/><text class="lt" x="1150" y="642" font-size="72" fill="#FFFFFF">ż</text>
+    <circle cx="1330" cy="720" r="52" fill="#FFFFFF" fill-opacity=".16"/><text class="lt" x="1330" y="722" font-size="52" fill="#FFFFFF">ó</text>
+    <circle cx="1490" cy="170" r="48" fill="#FFFFFF" fill-opacity=".16"/><text class="lt" x="1490" y="172" font-size="48" fill="#FFFFFF">ć</text>
+  </g>
+</svg>
