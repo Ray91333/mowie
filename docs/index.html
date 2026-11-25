@@ -1438,7 +1438,7 @@ function vDone(el,step,L){
     </div>
     <div class="stack" style="margin-top:20px">
       <div class="callout"><h3>Теперь вы умеете</h3><ul class="goals">${L.goals.map(g=>`<li><span>${g}</span></li>`).join("")}</ul></div>
-      <div class="row"><button class="btn primary" data-act="wlesson" data-i="${L.id}">Słówka этого урока</button><button class="btn" data-act="review">Повторить все слова</button></div>
+      <div class="row"><button class="btn primary" data-act="wlesson" data-i="${L.id}">Słówka этого урока</button><button class="btn" data-act="review">Повторить все слова</button><button class="btn" data-act="tlesson" data-i="${L.id}">Rozmowa: поговорить по теме</button></div>
       ${nc?`<div class="callout"><p class="eyebrow">Следующий урок${nextL?"":" · скоро"}</p><h3>Lekcja ${nc[0]} · ${nc[1]}</h3><p class="muted">${nc[2]}: ${nc[3]}.</p>${nextL?`<div><button class="btn primary" data-act="open" data-i="${nextL.id}">Начать урок ${nextL.id}</button></div>`:""}</div>`:`<div class="callout"><p class="eyebrow">Курс пройден</p><h3>Gratulacje! Вы прошли все 46 уроков A1–A2.</h3><p class="muted">Продолжайте повторять слова в разделе Słownictwo, чтобы ничего не забыть.</p></div>`}
     </div>`;
 }
@@ -1672,6 +1672,7 @@ document.addEventListener("click",ev=>{
     case "gram": view="gram"; render(); break;
     case "talk": view="talk"; render(); break;
     case "tscene": tStart(t.dataset.id); break;
+    case "tlesson": view="talk"; tStart("l"+i); break;
     case "tback": tStop(); RZ.scene=null; render(); break;
     case "tsend": tSend(); break;
     case "tmic": tMic(); break;
@@ -1981,32 +1982,104 @@ function genWordTasks(){
 }
 /* ===== Rozmowa: conversation practice with Claude (claude.ai "sample" capability) ===== */
 const ARTIFACT_URL="https://claude.ai/artifact/39og99LGzLcJbzkdYZs74e";
+/* free AI for the public site: URL of the Cloudflare Worker from worker/mowie-ai.js (see AI_SETUP.md); "" = off */
+const AI_URL_DEFAULT="";
+const AI_URL=(()=>{try{return localStorage.getItem("mowie.ai")||AI_URL_DEFAULT;}catch(e){return AI_URL_DEFAULT;}})();
 const SCENES=[
-  {id:"poznaj",n:2,pl:"Poznajmy się!",ru:"Знакомство",ai:"Ola, studentka z Wrocławia, poznaje ucznia na imprezie u wspólnych znajomych",me:"Вы знакомитесь с Олей на вечеринке",goal:"поздороваться, представиться, сказать, откуда вы"},
-  {id:"sasiad",n:3,pl:"Nowy sąsiad",ru:"Новый сосед",ai:"pan Tomasz, starszy sąsiad z tego samego bloku, uprzejmy i ciekawy",me:"Вы только что переехали, сосед заговаривает с вами на лестнице",goal:"рассказать, откуда вы, где живёте и чем занимаетесь"},
-  {id:"praca1",n:6,pl:"Kim jesteś z zawodu?",ru:"Профессия и возраст",ai:"Kasia, nowa koleżanka na kursie polskiego",me:"Вы на перерыве на курсах польского",goal:"сказать, кем работаете (narzędnik) и сколько вам лет"},
-  {id:"sklep",n:8,pl:"W sklepie",ru:"В магазине",ai:"sprzedawczyni w małym sklepie spożywczym",me:"Вы покупаете продукты",goal:"попросить товары (biernik), спросить цену"},
-  {id:"kawiarnia",n:9,pl:"W kawiarni",ru:"В кафе",ai:"kelner w kawiarni na Rynku we Wrocławiu",me:"Вы пришли в кафе",goal:"заказать еду и напиток, спросить счёт"},
-  {id:"targ",n:10,pl:"Na targu",ru:"На рынке",ai:"sprzedawca owoców i warzyw na targu, lubi żartować",me:"Вы на овощном рынке",goal:"купить фрукты: сколько, какие, по чём"},
-  {id:"dzien",n:13,pl:"Mój dzień",ru:"Мой день",ai:"Ola, koleżanka, pyta o twój zwykły dzień",me:"Подруга спрашивает о вашем распорядке дня",goal:"рассказать о дне по часам"},
-  {id:"droga",n:15,pl:"Jak dojść?",ru:"Как пройти?",ai:"przechodzień na ulicy we Wrocławiu, zna miasto",me:"Вы заблудились и спрашиваете дорогу",goal:"спросить дорогу и транспорт, понять ответ"},
-  {id:"weekend",n:17,pl:"Plany na weekend",ru:"Погода и выходные",ai:"Marek, kolega z pracy",me:"Коллега спрашивает о планах на выходные",goal:"поговорить о погоде и планах (будущее время)"},
-  {id:"mieszkanie",n:19,pl:"Wynajmuję mieszkanie",ru:"Снимаю квартиру",ai:"pani Nowak, właścicielka mieszkania do wynajęcia",me:"Вы пришли смотреть квартиру",goal:"спросить о комнатах, цене, мебели (miejscownik)"},
-  {id:"wakacje",n:21,pl:"Jak było na wakacjach?",ru:"Как прошёл отпуск",ai:"Kasia, przyjaciółka, która chce usłyszeć o twojej podróży",me:"Вы вернулись из поездки",goal:"рассказать о поездке в прошедшем времени"},
-  {id:"ubrania",n:24,pl:"W sklepie z ubraniami",ru:"Покупка одежды",ai:"sprzedawca w sklepie odzieżowym",me:"Вы выбираете одежду",goal:"спросить размер, цвет, примерить"},
-  {id:"lekarz",n:25,pl:"U lekarza",ru:"У врача",ai:"lekarka rodzinna w przychodni",me:"Вы заболели и пришли к врачу",goal:"описать, что болит, понять рекомендации"},
-  {id:"rozmowa",n:28,pl:"Rozmowa o pracę",ru:"Собеседование",ai:"rekruterka w firmie IT we Wrocławiu, profesjonalna i życzliwa",me:"Вы на собеседовании",goal:"рассказать об опыте и навыках"},
-  {id:"urzad",n:29,pl:"W urzędzie",ru:"В ведомстве",ai:"urzędniczka w urzędzie miasta (meldunek, karta pobytu)",me:"Вы оформляете документы",goal:"объяснить, что нужно, ответить на вопросы"},
+  {id:"l1",n:1,pl:"Pierwsze słowa",ru:"Первые слова",ai:"pani Ewa, nauczycielka polskiego na pierwszej lekcji, mówi bardzo prosto i powoli",me:"Первое занятие польского, учительница знакомится с группой",goal:"поздороваться, сказать имя по буквам, попрощаться"},
+  {id:"l2",n:2,pl:"Cześć, jestem…",ru:"Знакомство",ai:"Ola, studentka z Wrocławia, poznaje cię na imprezie u znajomych",me:"Вы знакомитесь с Олей на вечеринке",goal:"поздороваться, представиться, спросить, как дела"},
+  {id:"l3",n:3,pl:"Skąd jesteś?",ru:"Откуда ты",ai:"pan Tomasz, starszy sąsiad z bloku, uprzejmy i ciekawy",me:"Вы только что переехали, сосед заговаривает на лестнице",goal:"сказать, откуда вы и где живёте, какие языки знаете"},
+  {id:"l4",n:4,pl:"Co to jest?",ru:"Что это?",ai:"Kuba, kolega z akademika, pomaga ci urządzić pokój",me:"Друг помогает разложить вещи в новой комнате",goal:"назвать предметы и их цвет (ten, ta, to)"},
+  {id:"l5",n:5,pl:"Jaki on jest?",ru:"Какой он?",ai:"Kasia, przyjaciółka, pyta o twoich bliskich i znajomych",me:"Подруга спрашивает, какие у вас друзья и родные",goal:"описать внешность и характер человека"},
+  {id:"l6",n:6,pl:"Kim jesteś z zawodu?",ru:"Профессия и возраст",ai:"Kasia, nowa koleżanka na kursie polskiego",me:"Перерыв на курсах польского",goal:"сказать, кем работаете (narzędnik), сколько вам лет"},
+  {id:"l7",n:7,pl:"Co lubisz robić?",ru:"Хобби",ai:"Marek, kolega z pracy, lubi sport i kino",me:"Коллега спрашивает, что вы делаете в свободное время",goal:"рассказать о хобби: lubię + инфинитив"},
+  {id:"l8",n:8,pl:"W sklepie",ru:"В магазине",ai:"sprzedawczyni w małym sklepie spożywczym",me:"Вы покупаете продукты",goal:"попросить товары (biernik), спросить цену"},
+  {id:"l9",n:9,pl:"Smacznego!",ru:"Еда в течение дня",ai:"Ola, współlokatorka, rozmawia o jedzeniu i gotowaniu",me:"Соседка по квартире спрашивает, что вы едите на завтрак и ужин",goal:"рассказать, что едите и пьёте (z + narzędnik)"},
+  {id:"l10",n:10,pl:"Na targu",ru:"На рынке",ai:"sprzedawca owoców i warzyw na targu, lubi żartować",me:"Вы на овощном рынке",goal:"купить фрукты и овощи: сколько, какие, по чём"},
+  {id:"l11",n:11,pl:"W restauracji",ru:"В ресторане",ai:"kelner w restauracji na Rynku we Wrocławiu",me:"Вы пришли в ресторан",goal:"заказать, сказать чего не хотите (dopełniacz), попросить счёт"},
+  {id:"l12",n:12,pl:"Moja rodzina",ru:"Семья",ai:"Kasia, przyjaciółka, ogląda z tobą zdjęcia rodzinne",me:"Подруга смотрит ваши семейные фото",goal:"рассказать о семье (mój, moja, nasz), как часто видитесь"},
+  {id:"l13",n:13,pl:"Umówmy się!",ru:"Договориться о встрече",ai:"Marek, kolega, chce się z tobą spotkać w tym tygodniu",me:"Друг хочет встретиться",goal:"договориться о дне и времени: o której? w środę"},
+  {id:"l14",n:14,pl:"Co robiłeś w weekend?",ru:"Выходные",ai:"Ola, koleżanka z pracy, w poniedziałek rano",me:"Понедельник, коллега спрашивает о выходных",goal:"рассказать о выходных в прошедшем времени"},
+  {id:"l15",n:15,pl:"Jak dojść do rynku?",ru:"Как пройти",ai:"przechodzień na ulicy we Wrocławiu, zna miasto",me:"Вы заблудились и спрашиваете дорогу",goal:"спросить дорогу и транспорт (iść, jechać, do + dopełniacz)"},
+  {id:"l16",n:16,pl:"Na poczcie",ru:"На почте",ai:"pani na poczcie przy okienku",me:"Вы отправляете посылку и покупаете марки",goal:"сказать, что и сколько (dwa listy, pięć znaczków)"},
+  {id:"l17",n:17,pl:"Jaka będzie pogoda?",ru:"Погода и планы",ai:"Marek, kolega z pracy, w piątek po południu",me:"Коллега спрашивает о планах на выходные",goal:"поговорить о погоде и планах (будущее время)"},
+  {id:"l18",n:18,pl:"Co o tym myślisz?",ru:"Мнения",ai:"Kasia, przyjaciółka, po wyjściu z kina",me:"Вы вместе посмотрели фильм",goal:"сказать, что понравилось (podoba mi się) и что нет"},
+  {id:"l19",n:19,pl:"Moje mieszkanie",ru:"Моя квартира",ai:"Ola, koleżanka, pierwszy raz odwiedza cię w nowym mieszkaniu",me:"Подруга пришла в гости в новую квартиру",goal:"описать комнаты и где что стоит (miejscownik)"},
+  {id:"l20",n:20,pl:"Szukam pokoju",ru:"Ищу комнату",ai:"pani Nowak, właścicielka pokoju do wynajęcia",me:"Вы пришли смотреть комнату",goal:"спросить о цене, мебели, что где (nad, pod, obok)"},
+  {id:"l21",n:21,pl:"Na dworcu",ru:"На вокзале",ai:"kasjer na dworcu kolejowym we Wrocławiu",me:"Вы покупаете билет на поезд",goal:"купить билет: куда, когда, сколько стоит"},
+  {id:"l22",n:22,pl:"Wszystkiego najlepszego!",ru:"День рождения",ai:"Kasia, przyjaciółka, ma dziś urodziny i zaprasza cię na imprezę",me:"У подруги день рождения",goal:"поздравить, спросить о дате, рассказать о подарке"},
+  {id:"l23",n:23,pl:"Zadzwonię jutro",ru:"Телефонный звонок",ai:"recepcjonistka w szkole językowej, rozmowa telefoniczna",me:"Вы звоните, чтобы записаться на курс",goal:"договориться по телефону, что вы сделаете (dk в будущем)"},
+  {id:"l24",n:24,pl:"W sklepie z ubraniami",ru:"Покупка одежды",ai:"sprzedawca w sklepie odzieżowym",me:"Вы выбираете одежду",goal:"спросить размер, цвет, сравнить (większy, tańszy)"},
+  {id:"l25",n:25,pl:"U lekarza",ru:"У врача",ai:"lekarka rodzinna w przychodni",me:"Вы заболели и пришли к врачу",goal:"описать, что болит (boli mnie), понять советы (powinien)"},
+  {id:"l26",n:26,pl:"Mam sprawę",ru:"Просьба и жалоба",ai:"pan z administracji budynku",me:"В квартире сломалось отопление",goal:"вежливо попросить и пожаловаться (chciałbym, czy mógłby pan)"},
+  {id:"l27",n:27,pl:"Mój życiorys",ru:"Биография",ai:"Kasia, nowa znajoma, chce lepiej cię poznać",me:"Новая знакомая расспрашивает о вашей жизни",goal:"рассказать биографию: где родились, учились, работали"},
+  {id:"l28",n:28,pl:"Rozmowa o pracę",ru:"Собеседование",ai:"rekruterka w firmie IT we Wrocławiu, profesjonalna i życzliwa",me:"Вы на собеседовании",goal:"рассказать об опыте (pracowałem jako…, od… do…)"},
+  {id:"l29",n:29,pl:"W urzędzie",ru:"В ведомстве",ai:"urzędniczka w urzędzie miasta (meldunek, karta pobytu)",me:"Вы оформляете документы",goal:"объяснить, что нужно, спросить, что trzeba / można"},
+  {id:"l30",n:30,pl:"W banku",ru:"В банке",ai:"doradca w banku",me:"Вы открываете счёт в банке",goal:"спросить о счёте, карте и оплатах (celownik: komu?)"},
+  {id:"l31",n:31,pl:"Zdrowy tryb życia",ru:"Здоровый образ жизни",ai:"trener na siłowni, energiczny i motywujący",me:"Первая встреча с тренером",goal:"рассказать о привычках, понять советы (tryb rozkazujący)"},
+  {id:"l32",n:32,pl:"Wigilia",ru:"Рождество",ai:"mama Kasi, która zaprasza cię na Wigilię",me:"Вы в гостях на Wigilii у польской семьи",goal:"поблагодарить, поздравить (życzę ci…), спросить о традициях"},
+  {id:"l33",n:33,pl:"Piszę maila",ru:"Письмо",ai:"pani Anna, kierowniczka kursu, odpisuje na twojego maila",me:"Вы переписываетесь по-деловому с руководителем курса",goal:"писать вежливо: Szanowna Pani, обращение (wołacz)"},
+  {id:"l34",n:34,pl:"Przyjdziesz do mnie?",ru:"Приглашение в гости",ai:"Kuba, kolega, zaprasza cię do siebie",me:"Друг объясняет, как к нему прийти",goal:"договориться: przyjść, wyjść, wejść, dojść"},
+  {id:"l35",n:35,pl:"Wyjeżdżam na weekend",ru:"Поездка",ai:"Ola, koleżanka, pyta o twój wyjazd",me:"Вы едете на выходные в другой город",goal:"рассказать: wyjechać, przyjechać, dojechać"},
+  {id:"l36",n:36,pl:"Nad morzem",ru:"Отпуск у моря",ai:"recepcjonistka w pensjonacie nad morzem",me:"Вы заселяетесь в пансионат",goal:"спросить о номере и пляже (który, która, które)"},
+  {id:"l37",n:37,pl:"W górach",ru:"В горах",ai:"przewodnik górski w Tatrach",me:"Вы идёте в поход с гидом",goal:"сравнить маршруты: szybciej, coraz wyżej"},
+  {id:"l38",n:38,pl:"Polacy i cudzoziemcy",ru:"Национальности",ai:"Marek, kolega, rozmawia o ludziach z różnych krajów w pracy",me:"Разговор о коллегах из разных стран",goal:"говорить о людях во мн. ч.: Polacy, Ukraińcy, studenci"},
+  {id:"l39",n:39,pl:"Mili ludzie",ru:"Люди вокруг",ai:"pani Zofia, sąsiadka, lubi rozmawiać o ludziach z osiedla",me:"Соседка рассказывает о жильцах дома",goal:"описывать группы людей (mili, byli, pracowali)"},
+  {id:"l40",n:40,pl:"Co się stało?",ru:"Происшествие",ai:"policjant, który przyjmuje zgłoszenie",me:"У вас украли велосипед, вы в полиции",goal:"рассказать, что случилось и когда (виды глагола)"},
+  {id:"l41",n:41,pl:"Uczucia i relacje",ru:"Чувства",ai:"Kasia, przyjaciółka, która wie, że tęsknisz za domem",me:"Подруга видит, что вам грустно",goal:"говорить о чувствах: brakuje mi, tęsknię za"},
+  {id:"l42",n:42,pl:"Powiedział, że…",ru:"Пересказ",ai:"Ola, koleżanka, nie była na spotkaniu i pyta, co mówiono",me:"Вы пересказываете, что говорил начальник",goal:"косвенная речь: powiedział, że… zapytał, czy…"},
+  {id:"l43",n:43,pl:"Gotujemy po polsku",ru:"Готовим вместе",ai:"babcia Kasi, która uczy cię gotować pierogi",me:"Бабушка учит лепить вареники",goal:"понять и пересказать рецепт (tryb rozkazujący)"},
+  {id:"l44",n:44,pl:"Gdybym wygrał milion…",ru:"Мечты",ai:"Marek, kolega, w kolejce po kupon lotto",me:"Разговор «что бы ты сделал, если…»",goal:"говорить о мечтах: gdybym…, kupiłbym…"},
+  {id:"l45",n:45,pl:"Od kiedy tu mieszkasz?",ru:"Время в жизни",ai:"dziennikarka, która robi wywiad z cudzoziemcami we Wrocławiu",me:"У вас берут интервью для городской газеты",goal:"od roku, dwa lata temu, za miesiąc, przez tydzień"},
+  {id:"l46",n:46,pl:"Do zobaczenia!",ru:"Итог курса",ai:"Ola, koleżanka, która pomagała ci od początku pobytu w Polsce",me:"Прощальная встреча после курса",goal:"свободно поговорить обо всём, что выучили"},
   {id:"wolna",n:1,pl:"Wolna rozmowa",ru:"Свободная беседа",ai:"Ola, życzliwa koleżanka, rozmawia o czymkolwiek",me:"Говорите о чём хотите",goal:"любая тема в пределах пройденного"},
 ];
 const RZ={scene:null,chats:{},busy:false,ctl:null,mic:null};
 let SAMPLE, DICT, sampleState="wait";
 (async()=>{
-  if(!window.claude||!window.claude.use){sampleState="none"; if(view==="talk") render(); return;}
-  try{SAMPLE=await window.claude.use("sample");}catch(e){SAMPLE=null;}
-  try{DICT=await window.claude.use("dictation");}catch(e){DICT=null;}
-  sampleState=SAMPLE?"ok":"none"; if(view==="talk") render();
+  if(window.claude&&window.claude.use){
+    try{SAMPLE=await window.claude.use("sample");}catch(e){SAMPLE=null;}
+    try{DICT=await window.claude.use("dictation");}catch(e){DICT=null;}
+  }
+  if(!DICT) DICT=webDictation();
+  sampleState=(SAMPLE||AI_URL)?"ok":"none"; if(view==="talk") render();
 })();
+/* browser speech recognition (Chrome, Edge, Android) with the same interface as the claude.ai dictation capability */
+function webDictation(){
+  const R=window.SpeechRecognition||window.webkitSpeechRecognition; if(!R) return null;
+  let rec=null, st="idle", fin=[], par=[], sts=[];
+  const set=(x,reason)=>{st=x; sts.forEach(f=>f(reason?{state:x,reason}:{state:x}));};
+  return {
+    active:()=>st!=="idle",
+    onFinal:f=>{fin.push(f);}, onPartial:f=>{par.push(f);}, onState:f=>{sts.push(f);},
+    start:()=>new Promise((res,rej)=>{
+      rec=new R(); rec.lang="pl-PL"; rec.interimResults=true; rec.continuous=false;
+      rec.onstart=()=>{set("listening"); res();};
+      rec.onresult=ev=>{let p=""; for(let i=ev.resultIndex;i<ev.results.length;i++){const r=ev.results[i]; if(r.isFinal) fin.forEach(f=>f({text:" "+r[0].transcript.trim()})); else p+=r[0].transcript;} par.forEach(f=>f({text:p}));};
+      rec.onerror=ev=>{const c=ev.error==="not-allowed"||ev.error==="service-not-allowed"?"not_granted":"upstream_error"; if(st==="idle") rej({code:c}); set("idle",c);};
+      rec.onend=()=>{par.forEach(f=>f({text:""})); if(st!=="idle") set("idle","stopped");};
+      set("starting"); try{rec.start();}catch(e){set("idle","upstream_error"); rej({code:"upstream_error"});}
+    }),
+    stop:async()=>{ if(rec) rec.stop(); }
+  };
+}
+/* one call to the AI: Claude inside claude.ai, otherwise the Worker. turns = [{role,content}], first and last are "user" */
+async function aiCall(system,turns,{json=false,signal,onText}={}){
+  if(SAMPLE){
+    const input=[{role:"user",content:system},...turns];
+    if(json) return SAMPLE.json(input,{cache:false,modelTier:"quick",signal});
+    const r=await SAMPLE(input,{cache:false,signal,onText}); return r.text;
+  }
+  if(!AI_URL) throw {code:"not_granted"};
+  let res;
+  try{ res=await fetch(AI_URL,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({system,messages:turns,json}),signal}); }
+  catch(e){ throw {code:e&&e.name==="AbortError"?"cancelled":"upstream_error"}; }
+  if(res.status===429){ let d={}; try{d=await res.json();}catch(e){} throw {code:"rate_limited",reason:d.error==="daily_limit"?"daily_limit":undefined}; }
+  if(!res.ok) throw {code:"upstream_error"};
+  const d=await res.json(); const text=String(d.text||"").trim(); if(!text) throw {code:"invalid_json"};
+  if(!json) return text;
+  try{ return JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g,"")); }catch(e){ const m=text.match(/\{[\s\S]*\}/); if(m) try{return JSON.parse(m[0]);}catch(e2){} throw {code:"invalid_json"}; }
+}
 function curLesson(){const all=Object.values(LESSONS).sort((a,b)=>a.id-b.id); const n=all.find(l=>!LP(l.id).done); return n?n.id:46;}
 function tContext(n){
   const gram=COURSE.filter(c=>c[0]<=n).map(c=>`L${c[0]}: ${c[3]}`).join("\n");
@@ -2044,8 +2117,8 @@ function tEl(tag,cls,txt){const e=document.createElement(tag); if(cls) e.classNa
 function tErr(e){
   const c=e&&e.code;
   if(c==="cancelled") return "";
-  if(c==="not_granted"||c==="sampling_disabled"||c==="capability_disabled"||c==="not_declared") return "Доступ к Claude для этой страницы не разрешён. Разрешить можно в меню артефакта «Permissions».";
-  if(c==="rate_limited") return e.reason==="usage_limit"?"Лимит вашего аккаунта Claude исчерпан. Попробуйте позже.":"Слишком много сообщений подряд. Подождите немного и отправьте ещё раз.";
+  if(c==="not_granted"||c==="sampling_disabled"||c==="capability_disabled"||c==="not_declared") return SAMPLE?"Доступ к Claude для этой страницы не разрешён. Разрешить можно в меню артефакта «Permissions».":"ИИ-собеседник пока не подключён.";
+  if(c==="rate_limited") return e.reason==="usage_limit"?"Лимит вашего аккаунта Claude исчерпан. Попробуйте позже.":e.reason==="daily_limit"?"На сегодня бесплатные сообщения закончились. Возвращайтесь завтра!":"Слишком много сообщений подряд. Подождите минуту и отправьте ещё раз.";
   if(c==="session_expired") return "Нужно снова войти в claude.ai.";
   if(c==="invalid_json") return "Ответ пришёл в неожиданном виде. Отправьте сообщение ещё раз.";
   return "Связь с Claude прервалась. Отправьте сообщение ещё раз.";
@@ -2054,17 +2127,19 @@ function renderTalk(){
   setBar(null);
   if(!RZ.scene){
     const n=curLesson();
-    let h=head("Rozmowa","Разговор с ИИ","Живой диалог по-польски: Claude играет продавца, врача, соседа или подругу, говорит только тем, что вы уже прошли, и мягко исправляет ошибки. Можно писать или говорить в микрофон.");
-    if(sampleState==="none") h+=`<div class="banner">ИИ-собеседник работает в версии Mówię на claude.ai (нужен вход в аккаунт Claude). <a href="${ARTIFACT_URL}" target="_blank" rel="noopener">Открыть Mówię на claude.ai</a>.</div>`;
-    else if(sampleState==="wait") h+=`<div class="banner">Подключаюсь к Claude…</div>`;
+    let h=head("Rozmowa","Разговор с ИИ","Живой диалог по-польски по теме каждого урока: ИИ играет продавца, врача, соседа или подругу, говорит только тем, что вы уже прошли, и мягко исправляет ошибки. Можно писать или говорить в микрофон.");
+    if(sampleState==="none") h+=`<div class="banner">ИИ-собеседник скоро заработает. Пока можно посмотреть сцены.</div>`;
+    else if(sampleState==="wait") h+=`<div class="banner">Подключаюсь к ИИ…</div>`;
     h+=`<p class="muted" style="margin-top:14px">Сейчас вы на уроке ${n}. Сцены с более поздних уроков тоже можно открыть: ИИ подстроится под ваш уровень.</p><div class="scenes">`;
     h+=`<button class="scene help" data-act="tscene" data-id="help"><span class="lv">ПОМОЩНИК</span><span class="pl">Спросить о польском</span><small>Вопросы по грамматике, словам и урокам курса. Ответ по-русски.</small></button>`;
-    SCENES.forEach(sc=>{h+=`<button class="scene" data-act="tscene" data-id="${sc.id}"><span class="lv ${sc.n>n?"later":""}">${sc.n>1?`С УРОКА ${sc.n}`:"ЛЮБОЙ УРОВЕНЬ"}${RZ.chats[sc.id]&&RZ.chats[sc.id].items.length?" · ПРОДОЛЖИТЬ":""}</span><span class="pl">${sc.pl}</span><small>${sc.ru}. ${sc.me}.</small></button>`;});
+    const mine=SCENES.find(x=>x.n===n&&x.id!=="wolna");
+    if(mine) h+=`<button class="scene" data-act="tscene" data-id="${mine.id}" style="border-color:var(--blue)"><span class="lv">ВАШ УРОК ${n}</span><span class="pl">${mine.pl}</span><small>${mine.ru}. ${mine.me}.</small></button>`;
+    SCENES.filter(x=>x!==mine).forEach(sc=>{h+=`<button class="scene" data-act="tscene" data-id="${sc.id}"><span class="lv ${sc.n>n?"later":""}">${sc.id==="wolna"?"ЛЮБОЙ УРОВЕНЬ":`УРОК ${sc.n}`}${RZ.chats[sc.id]&&RZ.chats[sc.id].items.length?" · ПРОДОЛЖИТЬ":""}</span><span class="pl">${sc.pl}</span><small>${sc.ru}. ${sc.me}.</small></button>`;});
     app.innerHTML=h+`</div>`;
     return;
   }
   const help=RZ.scene==="help", sc=SCENES.find(x=>x.id===RZ.scene);
-  app.innerHTML=head(help?"Rozmowa · помощник":`Rozmowa · с урока ${sc.n}`,help?"Спросить о польском":sc.pl,help?"Спрашивайте по-русски: грамматика, слова, как сказать, что повторить.":`${sc.me}. Цель: ${sc.goal}.`)+
+  app.innerHTML=head(help?"Rozmowa · помощник":sc.id==="wolna"?"Rozmowa":`Rozmowa · Lekcja ${sc.n}`,help?"Спросить о польском":sc.pl,help?"Спрашивайте по-русски: грамматика, слова, как сказать, что повторить.":`${sc.me}. Цель: ${sc.goal}.`)+
     `<div class="tbar"><button class="btn ghost" data-act="tback">‹ Все сцены</button><span class="sp"></span>${help?"":`<button class="btn" data-act="ttr" aria-pressed="${S.tr}">Перевод</button><button class="btn" data-act="tvoice" aria-pressed="${!!S.tvoice}">${S.tvoice?"Озвучка: вкл.":"Озвучка: выкл."}</button>`}<button class="btn" data-act="trestart">Заново</button>${help?"":`<button class="btn" data-act="treview">Разбор</button>`}</div>
     <div class="chat" id="chat"></div>
     <div class="composer"><textarea id="tmsg" rows="1" placeholder="${help?"Ваш вопрос…":"Napisz po polsku…"}" aria-label="Сообщение"></textarea>${DICT?`<button class="btn mic" data-act="tmic" aria-label="Говорить в микрофон" title="Говорить в микрофон">🎤</button>`:""}<button class="btn primary" data-act="tsend">Wyślij</button></div>`;
@@ -2073,12 +2148,12 @@ function renderTalk(){
   const tin=document.getElementById("tmsg");
   tin.addEventListener("keydown",ev=>{ if(ev.key==="Enter"&&!ev.shiftKey){ev.preventDefault(); tSend();} });
   tin.addEventListener("input",()=>{tin.style.height="auto"; tin.style.height=Math.min(tin.scrollHeight,140)+"px";});
-  if(sampleState==="none") box.append(tNode({k:"note",text:"ИИ-собеседник работает только в версии на claude.ai: "+ARTIFACT_URL}));
+  if(sampleState==="none") box.append(tNode({k:"note",text:"ИИ-собеседник пока не подключён."}));
 }
 function tNode(it){
   if(it.k==="me") return tEl("div","msg me",it.text);
   if(it.k==="note") return tEl("div","msg note",it.text);
-  if(it.k==="think") return tEl("div","msg ai think",it.text||"Claude думает…");
+  if(it.k==="think") return tEl("div","msg ai think",it.text||"Печатает…");
   if(it.k==="fix"){
     const f=tEl("div","fixes");
     if(!it.fix.length){ f.append(tEl("div","fix good","Без ошибок ✓")); return f; }
@@ -2087,7 +2162,7 @@ function tNode(it){
   }
   if(it.k==="help"){ const d=tEl("div","msg ai"); d.style.whiteSpace="pre-wrap"; d.append(tEl("span","spk","Помощник")); d.append(document.createTextNode(String(it.text).replace(/\*\*/g,""))); return d; }
   const sc=SCENES.find(x=>x.id===RZ.scene), d=tEl("div","msg ai");
-  d.append(tEl("span","spk",sc?sc.ai.split(/,| w | na | z /)[0]:"Claude"));
+  d.append(tEl("span","spk",sc?sc.ai.split(/,| w | na | z | przy | po | od /)[0]:"Rozmówca"));
   d.append(tEl("span","pltxt pl",it.reply));
   const pb=tEl("button","play"); pb.dataset.act="say"; pb.dataset.t=it.reply; pb.dataset.w="ewa"; pb.setAttribute("aria-label","Слушать"); pb.innerHTML=ICON_PLAY; d.append(pb);
   if(it.ru){const r=tEl("span","rutxt",it.ru); r.hidden=!S.tr; d.append(r);}
@@ -2106,7 +2181,7 @@ function tStart(id){
 function tSend(){
   const tin=document.getElementById("tmsg"); if(!tin) return;
   const txt=tin.value.trim(); if(!txt||RZ.busy) return;
-  if(sampleState!=="ok"){ tPush({k:"note",text:"ИИ-собеседник работает только в версии на claude.ai: "+ARTIFACT_URL}); return; }
+  if(sampleState!=="ok"){ tPush({k:"note",text:"ИИ-собеседник пока не подключён."}); return; }
   tin.value=""; tin.style.height="auto";
   tPush({k:"me",text:txt}); touch(); save();
   tAsk(txt);
@@ -2116,15 +2191,15 @@ async function tAsk(txt){
   ch.turns.push({role:"user",content:txt});
   while(ch.turns.length>24) ch.turns.splice(0,2);
   if(ch.turns[0].role!=="user") ch.turns.shift();
-  const input=[{role:"user",content:help?tHelpRules():tRules(sc)},...ch.turns];
+  const sys=help?tHelpRules():tRules(sc), turns=[...ch.turns];
   RZ.busy=true; RZ.ctl=new AbortController();
   const box=document.getElementById("chat"), th=tNode({k:"think"}); if(box){box.append(th); th.scrollIntoView({block:"end"});}
   try{
     if(help){
-      const r=await SAMPLE(input,{cache:false,signal:RZ.ctl.signal,onText:({text})=>{th.textContent=text.replace(/\*\*/g,""); th.classList.remove("think");}});
-      th.remove(); ch.turns.push({role:"assistant",content:r.text}); tPush({k:"help",text:r.text});
+      const r=await aiCall(sys,turns,{signal:RZ.ctl.signal,onText:({text})=>{th.textContent=text.replace(/\*\*/g,""); th.classList.remove("think");}});
+      th.remove(); ch.turns.push({role:"assistant",content:r}); tPush({k:"help",text:r});
     }else{
-      const j=await SAMPLE.json(input,{cache:false,modelTier:"quick",signal:RZ.ctl.signal});
+      const j=await aiCall(sys,turns,{json:true,signal:RZ.ctl.signal});
       th.remove();
       const reply=String(j&&j.reply||"").trim(); if(!reply) throw {code:"invalid_json"};
       ch.turns.push({role:"assistant",content:JSON.stringify(j)});
@@ -2147,8 +2222,8 @@ async function tReview(){
   RZ.busy=true; RZ.ctl=new AbortController();
   const th=tNode({k:"think",text:"Готовлю разбор…"}); document.getElementById("chat")?.append(th); th.scrollIntoView({block:"end"});
   try{
-    const r=await SAMPLE(`You are a Polish tutor for a Russian-speaking learner at lesson ${curLesson()} of 46 (A1-A2). Here is a role-play "${sc.pl}" (goal: ${sc.goal}).\n\n${log}\n\nWrite feedback in Russian, plain text, no Markdown headings or tables: 1) what went well (1-2 lines); 2) the learner's main mistakes with corrected Polish and the grammar term (biernik, narzędnik...); 3) 3-6 useful Polish words or phrases for this situation with translation; 4) one score from 1 to 5. Keep it short.`,{cache:false,signal:RZ.ctl.signal,onText:({text})=>{th.textContent=text.replace(/\*\*/g,""); th.classList.remove("think");}});
-    th.remove(); tPush({k:"note",text:r.text.replace(/\*\*/g,"")});
+    const r=await aiCall("You are a friendly Polish tutor.",[{role:"user",content:`You are a Polish tutor for a Russian-speaking learner at lesson ${curLesson()} of 46 (A1-A2). Here is a role-play "${sc.pl}" (goal: ${sc.goal}).\n\n${log}\n\nWrite feedback in Russian, plain text, no Markdown headings or tables: 1) what went well (1-2 lines); 2) the learner's main mistakes with corrected Polish and the grammar term (biernik, narzędnik...); 3) 3-6 useful Polish words or phrases for this situation with translation; 4) one score from 1 to 5. Keep it short.`}],{signal:RZ.ctl.signal,onText:({text})=>{th.textContent=text.replace(/\*\*/g,""); th.classList.remove("think");}});
+    th.remove(); tPush({k:"note",text:r.replace(/\*\*/g,"")});
   }catch(e){ th.remove(); const m=tErr(e); if(m) tPush({k:"note",text:m}); }
   finally{ RZ.busy=false; RZ.ctl=null; }
 }
