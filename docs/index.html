@@ -326,6 +326,41 @@ table.btab{border-collapse:collapse;width:100%;min-width:420px;background:var(--
 .ginfo{display:block;font-size:.78rem;font-weight:500;color:var(--muted);line-height:1.35;margin-top:2px}
 .ginfo b{color:var(--red);font-weight:700;margin-right:2px}
 .flash .ginfo{font-size:.95rem;text-align:center}
+/* Rozmowa: AI conversation */
+.scenes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:14px}
+.scene{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;text-align:left;display:flex;flex-direction:column;gap:5px;min-width:0}
+.scene:hover{border-color:var(--blue)}
+.scene .pl{font-size:1.02rem;font-weight:700}
+.scene small{color:var(--muted)}
+.scene .lv{font-size:.75rem;font-weight:700;color:var(--blue);letter-spacing:.04em}
+.scene .lv.later{color:var(--muted)}
+.scene.help{border-color:var(--red);background:var(--red-soft)}
+.chat{display:flex;flex-direction:column;gap:12px;margin:16px 0 8px}
+.msg{max-width:88%;padding:10px 14px;border-radius:16px;line-height:1.45;overflow-wrap:anywhere}
+.msg.ai{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg.me{align-self:flex-end;background:var(--blue);color:var(--on-accent);border-bottom-right-radius:4px}
+.msg.note{align-self:stretch;max-width:none;background:var(--blue-soft);white-space:pre-wrap}
+.msg .spk{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.msg .pltxt{font-size:1.05rem}
+.msg .rutxt{display:block;color:var(--muted);font-size:.88rem;margin-top:4px}
+.msg .tip{display:block;margin-top:8px;font-size:.86rem;border-top:1px dashed var(--line);padding-top:6px}
+.msg .tip b{color:var(--blue)}
+.msg .play{vertical-align:middle;margin-left:6px}
+.msg.think{color:var(--muted);font-style:italic}
+.fixes{align-self:flex-end;max-width:88%;display:flex;flex-direction:column;gap:6px}
+.fix{background:var(--bad-soft);border-radius:12px;padding:8px 12px;font-size:.9rem}
+.fix s{color:var(--bad)}
+.fix ins{text-decoration:none;color:var(--ok);font-weight:700}
+.fix small{display:block;color:var(--muted);margin-top:2px}
+.fix.good{background:var(--ok-soft)}
+.composer{position:sticky;bottom:0;background:var(--paper);padding:10px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--line)}
+.composer textarea{flex:1;min-width:0;resize:none;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;background:var(--card);color:var(--ink);min-height:44px;max-height:140px}
+.composer textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+.composer .btn{padding:10px 14px}
+.mic.on{background:var(--red);border-color:var(--red);color:#fff}
+.tbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.tbar .sp{flex:1}
+.tbar .btn{padding:6px 11px;font-size:.85rem}
 /* grammar reference */
 .gterm{display:inline-block;background:var(--red);color:#FFFFFF;font-family:var(--f-display);font-size:.72rem;letter-spacing:.06em;padding:3px 9px;border-radius:6px;margin-bottom:6px}
 details.case{border:2px solid var(--blue);border-radius:16px;background:var(--card);overflow:hidden}
@@ -403,7 +438,10 @@ details.case .gbox-b h3{font-size:.85rem;text-transform:uppercase;letter-spacing
   .wrow{grid-template-columns:34px minmax(0,1fr) 12px}
   .wrow .ru{grid-column:2}
   .top .pill{display:none}
-  .tab{padding:5px 9px}
+  .tab{padding:5px 8px;font-size:.78rem}
+  .top .brand{font-size:0;gap:0}
+  .top .wrap{gap:8px}
+  .tabs{margin-left:auto}
 }
 @media (max-width:560px){
   .cover{grid-template-columns:1fr}
@@ -427,7 +465,7 @@ details.case .gbox-b h3{font-size:.85rem;text-transform:uppercase;letter-spacing
 <header class="top">
   <div class="wrap">
     <button class="brand" data-act="home" aria-label="На главную"><span id="toplogo"></span>Mówię</button>
-    <nav class="tabs" aria-label="Разделы"><button class="tab on" data-act="home" id="tab-course">Курс</button><button class="tab" data-act="words" id="tab-words">Słówka</button><button class="tab" data-act="gram" id="tab-gram">Gramatyka</button></nav>
+    <nav class="tabs" aria-label="Разделы"><button class="tab on" data-act="home" id="tab-course">Курс</button><button class="tab" data-act="words" id="tab-words">Słówka</button><button class="tab" data-act="gram" id="tab-gram">Gramatyka</button><button class="tab" data-act="talk" id="tab-talk">Rozmowa</button></nav>
     <span class="sp"></span>
     <span class="pill" title="Опыт"><b id="xp">0</b> XP</span>
     <span class="pill st" title="Дней подряд"><b id="streak">0</b> дн.</span>
@@ -955,11 +993,12 @@ function setTotals(L){const lp=LP(L.id); let f=0,t=0; Object.values(lp.sets).for
 let view="home", cur=1, P=null, R=null, resetAsk=false, abSel=0;
 function render(){
   stopAll(); pop.hidden=true;
-  if(view==="home") renderHome(); else if(view==="lesson") renderLesson(); else if(view==="words") renderWords(); else if(view==="gram") renderGram(); else renderReview();
+  if(view==="home") renderHome(); else if(view==="lesson") renderLesson(); else if(view==="words") renderWords(); else if(view==="gram") renderGram(); else if(view==="talk") renderTalk(); else renderReview();
   document.getElementById("tab-course").classList.toggle("on",view!=="words");
   document.getElementById("tab-words").classList.toggle("on",view==="words");
   document.getElementById("tab-gram").classList.toggle("on",view==="gram");
-  document.getElementById("tab-course").classList.toggle("on",view!=="words"&&view!=="gram");
+  document.getElementById("tab-talk").classList.toggle("on",view==="talk");
+  document.getElementById("tab-course").classList.toggle("on",view!=="words"&&view!=="gram"&&view!=="talk");
   topStats(); window.scrollTo(0,0);
 }
 
@@ -1631,6 +1670,15 @@ document.addEventListener("click",ev=>{
   switch(a){
     case "home": view="home"; R=null; WS=null; resetAsk=false; render(); break;
     case "gram": view="gram"; render(); break;
+    case "talk": view="talk"; render(); break;
+    case "tscene": tStart(t.dataset.id); break;
+    case "tback": tStop(); RZ.scene=null; render(); break;
+    case "tsend": tSend(); break;
+    case "tmic": tMic(); break;
+    case "tvoice": S.tvoice=!S.tvoice; save(); t.setAttribute("aria-pressed",!!S.tvoice); t.textContent=S.tvoice?"Озвучка: вкл.":"Озвучка: выкл."; break;
+    case "ttr": S.tr=!S.tr; save(); t.setAttribute("aria-pressed",S.tr); app.querySelectorAll(".msg .rutxt").forEach(r=>r.hidden=!S.tr); break;
+    case "treview": tReview(); break;
+    case "trestart": { const id=RZ.scene; tStop(); RZ.chats[id]=null; tStart(id); break; }
     case "gopen": { cur=i; const p=LP(cur); p.step=+t.dataset.s; p.seen=Math.max(p.seen,p.step); P=null; view="lesson"; save(); render(); break; }
     case "words": view="words"; WS=null; WV.topic=null; render(); break;
     case "wtopic": WV.topic=t.dataset.id; WS=null; render(); break;
@@ -1929,6 +1977,194 @@ function genWordTasks(){
     const nx=L.steps[vi+1];
     if(nx&&nx.k==="practice") nx.ex.push(...ex);
     else L.steps.splice(vi+1,0,{k:"practice",label:"Задания",sec:L.steps[vi].sec,ex});
+  });
+}
+/* ===== Rozmowa: conversation practice with Claude (claude.ai "sample" capability) ===== */
+const ARTIFACT_URL="https://claude.ai/artifact/39og99LGzLcJbzkdYZs74e";
+const SCENES=[
+  {id:"poznaj",n:2,pl:"Poznajmy się!",ru:"Знакомство",ai:"Ola, studentka z Wrocławia, poznaje ucznia na imprezie u wspólnych znajomych",me:"Вы знакомитесь с Олей на вечеринке",goal:"поздороваться, представиться, сказать, откуда вы"},
+  {id:"sasiad",n:3,pl:"Nowy sąsiad",ru:"Новый сосед",ai:"pan Tomasz, starszy sąsiad z tego samego bloku, uprzejmy i ciekawy",me:"Вы только что переехали, сосед заговаривает с вами на лестнице",goal:"рассказать, откуда вы, где живёте и чем занимаетесь"},
+  {id:"praca1",n:6,pl:"Kim jesteś z zawodu?",ru:"Профессия и возраст",ai:"Kasia, nowa koleżanka na kursie polskiego",me:"Вы на перерыве на курсах польского",goal:"сказать, кем работаете (narzędnik) и сколько вам лет"},
+  {id:"sklep",n:8,pl:"W sklepie",ru:"В магазине",ai:"sprzedawczyni w małym sklepie spożywczym",me:"Вы покупаете продукты",goal:"попросить товары (biernik), спросить цену"},
+  {id:"kawiarnia",n:9,pl:"W kawiarni",ru:"В кафе",ai:"kelner w kawiarni na Rynku we Wrocławiu",me:"Вы пришли в кафе",goal:"заказать еду и напиток, спросить счёт"},
+  {id:"targ",n:10,pl:"Na targu",ru:"На рынке",ai:"sprzedawca owoców i warzyw na targu, lubi żartować",me:"Вы на овощном рынке",goal:"купить фрукты: сколько, какие, по чём"},
+  {id:"dzien",n:13,pl:"Mój dzień",ru:"Мой день",ai:"Ola, koleżanka, pyta o twój zwykły dzień",me:"Подруга спрашивает о вашем распорядке дня",goal:"рассказать о дне по часам"},
+  {id:"droga",n:15,pl:"Jak dojść?",ru:"Как пройти?",ai:"przechodzień na ulicy we Wrocławiu, zna miasto",me:"Вы заблудились и спрашиваете дорогу",goal:"спросить дорогу и транспорт, понять ответ"},
+  {id:"weekend",n:17,pl:"Plany na weekend",ru:"Погода и выходные",ai:"Marek, kolega z pracy",me:"Коллега спрашивает о планах на выходные",goal:"поговорить о погоде и планах (будущее время)"},
+  {id:"mieszkanie",n:19,pl:"Wynajmuję mieszkanie",ru:"Снимаю квартиру",ai:"pani Nowak, właścicielka mieszkania do wynajęcia",me:"Вы пришли смотреть квартиру",goal:"спросить о комнатах, цене, мебели (miejscownik)"},
+  {id:"wakacje",n:21,pl:"Jak było na wakacjach?",ru:"Как прошёл отпуск",ai:"Kasia, przyjaciółka, która chce usłyszeć o twojej podróży",me:"Вы вернулись из поездки",goal:"рассказать о поездке в прошедшем времени"},
+  {id:"ubrania",n:24,pl:"W sklepie z ubraniami",ru:"Покупка одежды",ai:"sprzedawca w sklepie odzieżowym",me:"Вы выбираете одежду",goal:"спросить размер, цвет, примерить"},
+  {id:"lekarz",n:25,pl:"U lekarza",ru:"У врача",ai:"lekarka rodzinna w przychodni",me:"Вы заболели и пришли к врачу",goal:"описать, что болит, понять рекомендации"},
+  {id:"rozmowa",n:28,pl:"Rozmowa o pracę",ru:"Собеседование",ai:"rekruterka w firmie IT we Wrocławiu, profesjonalna i życzliwa",me:"Вы на собеседовании",goal:"рассказать об опыте и навыках"},
+  {id:"urzad",n:29,pl:"W urzędzie",ru:"В ведомстве",ai:"urzędniczka w urzędzie miasta (meldunek, karta pobytu)",me:"Вы оформляете документы",goal:"объяснить, что нужно, ответить на вопросы"},
+  {id:"wolna",n:1,pl:"Wolna rozmowa",ru:"Свободная беседа",ai:"Ola, życzliwa koleżanka, rozmawia o czymkolwiek",me:"Говорите о чём хотите",goal:"любая тема в пределах пройденного"},
+];
+const RZ={scene:null,chats:{},busy:false,ctl:null,mic:null};
+let SAMPLE, DICT, sampleState="wait";
+(async()=>{
+  if(!window.claude||!window.claude.use){sampleState="none"; if(view==="talk") render(); return;}
+  try{SAMPLE=await window.claude.use("sample");}catch(e){SAMPLE=null;}
+  try{DICT=await window.claude.use("dictation");}catch(e){DICT=null;}
+  sampleState=SAMPLE?"ok":"none"; if(view==="talk") render();
+})();
+function curLesson(){const all=Object.values(LESSONS).sort((a,b)=>a.id-b.id); const n=all.find(l=>!LP(l.id).done); return n?n.id:46;}
+function tContext(n){
+  const gram=COURSE.filter(c=>c[0]<=n).map(c=>`L${c[0]}: ${c[3]}`).join("\n");
+  const seen=new Set(), words=[];
+  for(let k=n;k>=1&&words.length<260;k--) (LW[k]||[]).forEach(w=>{ if(!seen.has(w.pl)&&words.length<260){seen.add(w.pl); words.push(w.pl);} });
+  const weak=allWords().filter(w=>{const v=S.voc[w.id]; return v&&!v.k&&v.box<=1;}).slice(0,25).map(w=>w.pl);
+  return {gram,words:words.join(", "),weak:weak.join(", ")};
+}
+function tRules(sc){
+  const n=Math.max(curLesson(),1), c=tContext(n);
+  return `You are a conversation partner inside "Mówię", a course of Polish for Russian speakers (from zero to A2, 46 lessons).
+ROLE-PLAY SCENE: ${sc.pl} (${sc.ru}). You play: ${sc.ai}. The learner: ${sc.me}. Learner's goal: ${sc.goal}.
+LEARNER LEVEL: currently at lesson ${n} of 46 (${n<=26?"A1":"A2"}). Grammar covered so far:
+${c.gram}
+Words from the learner's lessons (prefer them): ${c.words}
+${c.weak?`Words the learner struggles with (use some of them naturally): ${c.weak}\n`:""}
+RULES:
+- Speak only Polish in "reply": simple, natural, at the learner's level, 1-3 short sentences, then usually one question so the conversation continues. Stay in role. Do not use grammar the learner has not covered yet if you can avoid it.
+- Check the learner's LAST message. In "fix" list real mistakes: wrong endings/cases, verb forms, word choice, missing Polish letters (ą, ę, ł, ó, ś, ż...). Ignore capital letters and punctuation. Explain each briefly in Russian and name the Polish grammar term when relevant (mianownik, biernik, narzędnik, miejscownik, dopełniacz, czas przeszły...). If there are no mistakes, "fix" is [].
+- If the learner writes in Russian or says they don't know how to say something, put the correct Polish phrase into "tip" and continue in Polish.
+- "ru" is a Russian translation of your reply. "tip" is a short Russian hint with an example of what the learner could answer (Polish example in it), or "".
+- If the learner's goal is reached and the scene naturally ends, set "end": true.
+Reply with ONLY a JSON object: {"reply":"...","ru":"...","fix":[{"wrong":"...","right":"...","why":"..."}],"tip":"...","end":false}`;
+}
+function tHelpRules(){
+  const n=curLesson(), c=tContext(n), done=Object.values(LESSONS).filter(l=>LP(l.id).done).length;
+  const wl=allWords().filter(w=>["done","known"].includes(wStatus(w))).length;
+  return `You are the built-in tutor of "Mówię", a course of Polish for Russian speakers (46 lessons, A1 = lessons 1-26, A2 = 27-46). Answer in Russian, briefly and clearly, with Polish examples. Use Polish grammar names (mianownik, dopełniacz, celownik, biernik, narzędnik, miejscownik, wołacz; czas teraźniejszy/przeszły/przyszły; aspekt dokonany/niedokonany) with a Russian explanation, as the course does. When useful, point to the lesson number where the topic is taught. App sections: "Курс" (lessons: theory first, then exercises), "Słówka" (word trainer with spaced repetition; words are grouped per lesson and by topic), "Gramatyka" (reference tables of cases and verbs), "Rozmowa" (role-play chats with you). Do not use Markdown headings or tables; short paragraphs and simple lists are fine.
+COURSE MAP:
+${COURSE.map(x=>`L${x[0]} ${x[1]} — ${x[2]}: ${x[3]}`).join("\n")}
+LEARNER: at lesson ${n}, lessons finished: ${done}, words learned: ${wl}.${c.weak?` Weak words: ${c.weak}.`:""}`;
+}
+function tChat(id){ if(!RZ.chats[id]) RZ.chats[id]={turns:[],items:[],ended:false}; return RZ.chats[id]; }
+function tEl(tag,cls,txt){const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e;}
+function tErr(e){
+  const c=e&&e.code;
+  if(c==="cancelled") return "";
+  if(c==="not_granted"||c==="sampling_disabled"||c==="capability_disabled"||c==="not_declared") return "Доступ к Claude для этой страницы не разрешён. Разрешить можно в меню артефакта «Permissions».";
+  if(c==="rate_limited") return e.reason==="usage_limit"?"Лимит вашего аккаунта Claude исчерпан. Попробуйте позже.":"Слишком много сообщений подряд. Подождите немного и отправьте ещё раз.";
+  if(c==="session_expired") return "Нужно снова войти в claude.ai.";
+  if(c==="invalid_json") return "Ответ пришёл в неожиданном виде. Отправьте сообщение ещё раз.";
+  return "Связь с Claude прервалась. Отправьте сообщение ещё раз.";
+}
+function renderTalk(){
+  setBar(null);
+  if(!RZ.scene){
+    const n=curLesson();
+    let h=head("Rozmowa","Разговор с ИИ","Живой диалог по-польски: Claude играет продавца, врача, соседа или подругу, говорит только тем, что вы уже прошли, и мягко исправляет ошибки. Можно писать или говорить в микрофон.");
+    if(sampleState==="none") h+=`<div class="banner">ИИ-собеседник работает в версии Mówię на claude.ai (нужен вход в аккаунт Claude). <a href="${ARTIFACT_URL}" target="_blank" rel="noopener">Открыть Mówię на claude.ai</a>.</div>`;
+    else if(sampleState==="wait") h+=`<div class="banner">Подключаюсь к Claude…</div>`;
+    h+=`<p class="muted" style="margin-top:14px">Сейчас вы на уроке ${n}. Сцены с более поздних уроков тоже можно открыть: ИИ подстроится под ваш уровень.</p><div class="scenes">`;
+    h+=`<button class="scene help" data-act="tscene" data-id="help"><span class="lv">ПОМОЩНИК</span><span class="pl">Спросить о польском</span><small>Вопросы по грамматике, словам и урокам курса. Ответ по-русски.</small></button>`;
+    SCENES.forEach(sc=>{h+=`<button class="scene" data-act="tscene" data-id="${sc.id}"><span class="lv ${sc.n>n?"later":""}">${sc.n>1?`С УРОКА ${sc.n}`:"ЛЮБОЙ УРОВЕНЬ"}${RZ.chats[sc.id]&&RZ.chats[sc.id].items.length?" · ПРОДОЛЖИТЬ":""}</span><span class="pl">${sc.pl}</span><small>${sc.ru}. ${sc.me}.</small></button>`;});
+    app.innerHTML=h+`</div>`;
+    return;
+  }
+  const help=RZ.scene==="help", sc=SCENES.find(x=>x.id===RZ.scene);
+  app.innerHTML=head(help?"Rozmowa · помощник":`Rozmowa · с урока ${sc.n}`,help?"Спросить о польском":sc.pl,help?"Спрашивайте по-русски: грамматика, слова, как сказать, что повторить.":`${sc.me}. Цель: ${sc.goal}.`)+
+    `<div class="tbar"><button class="btn ghost" data-act="tback">‹ Все сцены</button><span class="sp"></span>${help?"":`<button class="btn" data-act="ttr" aria-pressed="${S.tr}">Перевод</button><button class="btn" data-act="tvoice" aria-pressed="${!!S.tvoice}">${S.tvoice?"Озвучка: вкл.":"Озвучка: выкл."}</button>`}<button class="btn" data-act="trestart">Заново</button>${help?"":`<button class="btn" data-act="treview">Разбор</button>`}</div>
+    <div class="chat" id="chat"></div>
+    <div class="composer"><textarea id="tmsg" rows="1" placeholder="${help?"Ваш вопрос…":"Napisz po polsku…"}" aria-label="Сообщение"></textarea>${DICT?`<button class="btn mic" data-act="tmic" aria-label="Говорить в микрофон" title="Говорить в микрофон">🎤</button>`:""}<button class="btn primary" data-act="tsend">Wyślij</button></div>`;
+  const ch=tChat(RZ.scene), box=document.getElementById("chat");
+  ch.items.forEach(it=>box.append(tNode(it)));
+  const tin=document.getElementById("tmsg");
+  tin.addEventListener("keydown",ev=>{ if(ev.key==="Enter"&&!ev.shiftKey){ev.preventDefault(); tSend();} });
+  tin.addEventListener("input",()=>{tin.style.height="auto"; tin.style.height=Math.min(tin.scrollHeight,140)+"px";});
+  if(sampleState==="none") box.append(tNode({k:"note",text:"ИИ-собеседник работает только в версии на claude.ai: "+ARTIFACT_URL}));
+}
+function tNode(it){
+  if(it.k==="me") return tEl("div","msg me",it.text);
+  if(it.k==="note") return tEl("div","msg note",it.text);
+  if(it.k==="think") return tEl("div","msg ai think",it.text||"Claude думает…");
+  if(it.k==="fix"){
+    const f=tEl("div","fixes");
+    if(!it.fix.length){ f.append(tEl("div","fix good","Без ошибок ✓")); return f; }
+    it.fix.forEach(x=>{const d=tEl("div","fix"); d.append(tEl("s",null,String(x.wrong||"")),document.createTextNode(" → "),tEl("ins",null,String(x.right||""))); if(x.why) d.append(tEl("small",null,String(x.why))); f.append(d);});
+    return f;
+  }
+  if(it.k==="help"){ const d=tEl("div","msg ai"); d.style.whiteSpace="pre-wrap"; d.append(tEl("span","spk","Помощник")); d.append(document.createTextNode(String(it.text).replace(/\*\*/g,""))); return d; }
+  const sc=SCENES.find(x=>x.id===RZ.scene), d=tEl("div","msg ai");
+  d.append(tEl("span","spk",sc?sc.ai.split(/,| w | na | z /)[0]:"Claude"));
+  d.append(tEl("span","pltxt pl",it.reply));
+  const pb=tEl("button","play"); pb.dataset.act="say"; pb.dataset.t=it.reply; pb.dataset.w="ewa"; pb.setAttribute("aria-label","Слушать"); pb.innerHTML=ICON_PLAY; d.append(pb);
+  if(it.ru){const r=tEl("span","rutxt",it.ru); r.hidden=!S.tr; d.append(r);}
+  if(it.tip){const t=tEl("span","tip"); t.append(tEl("b",null,"Подсказка: "),document.createTextNode(it.tip)); d.append(t);}
+  return d;
+}
+function tPush(it){const ch=tChat(RZ.scene); ch.items.push(it); const box=document.getElementById("chat"); if(box){const n=tNode(it); box.append(n); n.scrollIntoView({block:"end",behavior:"smooth"});} }
+function tStop(){ if(RZ.ctl) RZ.ctl.abort(); RZ.ctl=null; RZ.busy=false; if(DICT&&DICT.active&&DICT.active()) DICT.stop().catch(()=>{}); }
+function tStart(id){
+  RZ.scene=id; render();
+  const ch=tChat(id);
+  if(ch.items.length||sampleState!=="ok") return;
+  if(id==="help"){ tPush({k:"help",text:"Cześć! Я помощник курса. Спросите что угодно: «чем biernik отличается от mianownika?», «как сказать „мне нужно“?», «что мне повторить?»"}); return; }
+  tAsk("Zacznij scenę: przywitaj się i powiedz pierwszą kwestię swojej roli.");
+}
+function tSend(){
+  const tin=document.getElementById("tmsg"); if(!tin) return;
+  const txt=tin.value.trim(); if(!txt||RZ.busy) return;
+  if(sampleState!=="ok"){ tPush({k:"note",text:"ИИ-собеседник работает только в версии на claude.ai: "+ARTIFACT_URL}); return; }
+  tin.value=""; tin.style.height="auto";
+  tPush({k:"me",text:txt}); touch(); save();
+  tAsk(txt);
+}
+async function tAsk(txt){
+  const id=RZ.scene, ch=tChat(id), help=id==="help", sc=SCENES.find(x=>x.id===id);
+  ch.turns.push({role:"user",content:txt});
+  while(ch.turns.length>24) ch.turns.splice(0,2);
+  if(ch.turns[0].role!=="user") ch.turns.shift();
+  const input=[{role:"user",content:help?tHelpRules():tRules(sc)},...ch.turns];
+  RZ.busy=true; RZ.ctl=new AbortController();
+  const box=document.getElementById("chat"), th=tNode({k:"think"}); if(box){box.append(th); th.scrollIntoView({block:"end"});}
+  try{
+    if(help){
+      const r=await SAMPLE(input,{cache:false,signal:RZ.ctl.signal,onText:({text})=>{th.textContent=text.replace(/\*\*/g,""); th.classList.remove("think");}});
+      th.remove(); ch.turns.push({role:"assistant",content:r.text}); tPush({k:"help",text:r.text});
+    }else{
+      const j=await SAMPLE.json(input,{cache:false,modelTier:"quick",signal:RZ.ctl.signal});
+      th.remove();
+      const reply=String(j&&j.reply||"").trim(); if(!reply) throw {code:"invalid_json"};
+      ch.turns.push({role:"assistant",content:JSON.stringify(j)});
+      if(ch.turns.length>2&&Array.isArray(j.fix)) tPush({k:"fix",fix:j.fix.filter(x=>x&&x.right)});
+      tPush({k:"ai",reply,ru:String(j.ru||""),tip:String(j.tip||"")});
+      if(S.tvoice) say(reply,"ewa");
+      if(j.end&&!ch.ended){ch.ended=true; S.xp+=10; save(); tPush({k:"note",text:"Сцена пройдена! +10 XP. Нажмите «Разбор», чтобы получить отзыв о разговоре, или продолжайте говорить."});}
+    }
+  }catch(e){
+    th.remove(); ch.turns.pop();
+    const m=tErr(e); if(m) tPush({k:"note",text:m});
+  }finally{ RZ.busy=false; RZ.ctl=null; }
+}
+async function tReview(){
+  const id=RZ.scene, ch=tChat(id), sc=SCENES.find(x=>x.id===id);
+  if(RZ.busy||sampleState!=="ok") return;
+  const mine=ch.items.filter(x=>x.k==="me").map(x=>x.text);
+  if(mine.length<2){ tPush({k:"note",text:"Сначала поговорите подольше: хотя бы 2–3 реплики."}); return; }
+  const log=ch.items.filter(x=>x.k==="me"||x.k==="ai").map(x=>x.k==="me"?"Learner: "+x.text:"Partner: "+x.reply).join("\n");
+  RZ.busy=true; RZ.ctl=new AbortController();
+  const th=tNode({k:"think",text:"Готовлю разбор…"}); document.getElementById("chat")?.append(th); th.scrollIntoView({block:"end"});
+  try{
+    const r=await SAMPLE(`You are a Polish tutor for a Russian-speaking learner at lesson ${curLesson()} of 46 (A1-A2). Here is a role-play "${sc.pl}" (goal: ${sc.goal}).\n\n${log}\n\nWrite feedback in Russian, plain text, no Markdown headings or tables: 1) what went well (1-2 lines); 2) the learner's main mistakes with corrected Polish and the grammar term (biernik, narzędnik...); 3) 3-6 useful Polish words or phrases for this situation with translation; 4) one score from 1 to 5. Keep it short.`,{cache:false,signal:RZ.ctl.signal,onText:({text})=>{th.textContent=text.replace(/\*\*/g,""); th.classList.remove("think");}});
+    th.remove(); tPush({k:"note",text:r.text.replace(/\*\*/g,"")});
+  }catch(e){ th.remove(); const m=tErr(e); if(m) tPush({k:"note",text:m}); }
+  finally{ RZ.busy=false; RZ.ctl=null; }
+}
+function tMic(){
+  if(!DICT) return;
+  const btn=app.querySelector('[data-act="tmic"]');
+  if(DICT.active()){ DICT.stop().catch(()=>{}); return; }
+  if(!RZ.mic){
+    RZ.mic=true;
+    DICT.onFinal(({text})=>{const t=document.getElementById("tmsg"); if(!t) return; t.value=(t.value?t.value+text:text.trimStart()); t.dispatchEvent(new Event("input"));});
+    DICT.onPartial(({text})=>{const t=document.getElementById("tmsg"); if(t) t.placeholder=text||"Napisz po polsku…";});
+    DICT.onState(({state,reason})=>{const b=app.querySelector('[data-act="tmic"]'); if(b) b.classList.toggle("on",state!=="idle"); if(state==="idle"&&reason==="unavailable"){ tPush({k:"note",text:"Распознавание польской речи недоступно в этом браузере. Пишите текстом."}); }});
+  }
+  DICT.start(RZ.scene==="help"?{}:{language:"pl"}).catch(e=>{
+    if(e&&e.code==="not_granted") tPush({k:"note",text:"Микрофон не разрешён. Можно писать текстом."});
+    else if(e&&e.code==="unavailable") tPush({k:"note",text:"Польская диктовка здесь недоступна. Пишите текстом."});
   });
 }
 function boot(){
