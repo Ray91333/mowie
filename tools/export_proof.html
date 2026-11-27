@@ -1,0 +1,52 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Mówię — экспорт текстов для вычитки</title>
+<!-- Opens the built app in an iframe and dumps every Polish text of the course into <pre id="out">.
+     Run: python tools/export_proof.py (uses headless Edge/Chrome). -->
+<iframe id="f" src="../mowie.html" style="width:10px;height:10px"></iframe>
+<pre id="out">WAIT</pre>
+<script>
+function EXPORT(LESSONS,L1,L2){
+const strip=s=>String(s).replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/\s+/g," ").trim();
+const TYPES=/^(mcq|audio|fill|listen|build|type|match|stress|cloze|order|tab|tcloze)$/;
+const SKIP=new Set(["k","label","sec","lab","a","say","pair","bank","audio","plain","extra","n","id","g","pitch","who","c"]);
+function walk(o,out,depth=0){ if(depth>6||o==null) return;
+  if(typeof o==="string"){const s=strip(o); if(s.length>1) out.push(s); return;}
+  if(Array.isArray(o)){o.forEach(x=>walk(x,out,depth+1)); return;}
+  if(typeof o==="object") for(const [k,v] of Object.entries(o)){ if(SKIP.has(k)||typeof v==="function"||(k==="t"&&TYPES.test(v))) continue; walk(v,out,depth+1);} }
+const seg=x=>typeof x==="string"?x:(x&&x.a?"[["+x.a[0]+(x.opts?" | варианты: "+x.opts.join("/"):"")+"]]":"");
+const lineTxt=l=>Array.isArray(l)?l.map(seg).join(""):seg(l);
+const AUTO=/^Proszę uzupełnić: (ten, ta, to|biernik)|końcówki przymiotników/;
+function ex(e){
+  if(e.t==="order"||e.t==="tcloze") return null;
+  if(e.t==="cloze"){ if(e.audio||AUTO.test(e.pl||"")) return null; return (e.pl?e.pl+" ":"")+(e.q?"("+strip(e.q)+")":"")+"\n    "+e.lines.map(lineTxt).join("\n    "); }
+  if(e.t==="tab"){ const o=[]; walk(e,o); return "Таблица: "+o.join(" · "); }
+  const o=[]; if(e.q) o.push(strip(e.q)); if(e.text) o.push(strip(e.text)); if(e.s) o.push(strip(e.s).replace("___","[["+(e.opts&&typeof e.a==="number"?strip(e.opts[e.a]):"…")+"]]")); if(e.answer) o.push("ответ: "+strip(e.answer)); if(e.answers) o.push("ответ: "+e.answers.map(strip).join(" / ")); if(e.word) o.push("слово: "+e.word); if(e.pl) o.push(strip(e.pl));
+  if(e.opts&&typeof e.a==="number") o.push("правильный ответ: "+strip(e.opts[e.a]));
+  else if(e.opts) o.push("варианты: "+e.opts.map(strip).join(" / "));
+  if(e.ans) o.push("ответ: "+[].concat(e.ans).map(strip).join(" / "));
+  if(e.pairs) o.push(e.pairs.map(p=>p.map(strip).join(" = ")).join("; "));
+  if(e.words) o.push("слова: "+[].concat(e.words).map(strip).join(" "));
+  if(e.why) o.push("пояснение: "+strip(e.why));
+  if(!e.q&&!e.text&&!e.pl&&!e.opts){ walk(e,o); }
+  return o.join(" — ");
+}
+const res=[];
+Object.values(LESSONS).sort((a,b)=>a.id-b.id).forEach(L=>{
+  const o=["","=== LEKCJA "+L.id+": "+L.title+" ("+L.ru+") ==="];
+  if(L.id<=2){ const raw=L.id===1?L1:L2; const extra=[]; for(const [k,v] of Object.entries(raw)){ if(["steps","vocab","id","title","ru","goals","intro","who"].includes(k)) continue; walk(v,extra);} if(extra.length) o.push("--- Материал урока ---",...extra.map(s=>"  "+s)); }
+  L.steps.forEach(s=>{
+    if(s.k==="scene"&&s.lines){ o.push("--- Dialog: "+s.pl+" ("+s.place+") ---"); (Array.isArray(s.lines)?s.lines:String(s.lines).split(String.fromCharCode(10)).map(x=>x.split("|"))).forEach(l=>o.push("  "+(l.who||l[0]||"")+": "+strip(l.pl||l.t||l[1]||"")+"  — "+strip(l.ru||l[2]||""))); }
+    else if(s.k==="text"){ o.push("--- Tekst: "+strip(s.title)+" ---"); const tl=[]; walk(s.lines||s.text||s.body,tl); tl.forEach(x=>o.push("  "+x)); }
+    else if(s.k==="grammar"){ o.push("--- Gramatyka: "+strip(s.title)+" ---"); const g=[]; walk(s.body,g); g.forEach(x=>o.push("  "+x)); }
+    else if(s.k==="practice"){ const xs=s.ex.map(ex).filter(Boolean); if(xs.length){ o.push("--- Zadania (раздел "+(s.sec||"")+") ---"); xs.forEach((x,i)=>o.push("  "+(i+1)+") "+x)); } }
+    else if(!["intro","done","vocab","practice"].includes(s.k)){ const g=[]; walk(s,g); if(g.length){o.push("--- "+s.k+" ---"); g.forEach(x=>o.push("  "+x));} }
+  });
+  if(L.vocab&&L.vocab.length){ o.push("--- Słówka ---"); L.vocab.forEach(v=>o.push("  "+v.pl+" — "+v.ru+(v.ex?" | "+v.ex+" — "+(v.exr||""):""))); }
+  res.push(o.join("\n"));
+});
+return res.join("\n@@SPLIT@@\n");
+}
+const f=document.getElementById("f");
+f.onload=()=>setTimeout(()=>{ try{ document.getElementById("out").textContent=(()=>{const W=f.contentWindow; return EXPORT(W.eval("LESSONS"),W.eval("L1"),W.eval("L2"));})(); }catch(e){ document.getElementById("out").textContent="ERROR "+e.stack; } },2500);
+</script>
