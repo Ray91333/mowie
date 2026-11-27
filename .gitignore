@@ -1,3 +1,7 @@
 .claude/
 __pycache__/
 *.pyc
+
+# raw Gemini images (compressed copies live in img/)
+images/*.jpg
+images/*.png

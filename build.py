@@ -24,3 +24,8 @@ html = out.replace("<title>", extra + "<title>", 1)
 (site / "index.html").write_text(html, encoding="utf-8")
 shutil.copy(root / "brand" / "logo.svg", site / "logo.svg")
 print("built docs/index.html")
+
+# illustrations: img/*.webp next to mowie.html, copied into the website
+if (root / "img").exists():
+    shutil.copytree(root / "img", site / "img", dirs_exist_ok=True)
+    print("copied img/ ->", len(list((site / "img").glob("*.webp"))), "pictures")

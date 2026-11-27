@@ -217,6 +217,8 @@ table.t{border-collapse:collapse;width:100%;min-width:480px;background:var(--car
 .scene .flagline{height:6px;background:linear-gradient(to right,var(--brand-blue) 0 50%,var(--brand-red) 50%)}
 .scene-h{padding:16px 18px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
 .scene-h p{color:var(--muted);font-size:.95rem}
+.scimg{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--line)}
+.eximg{display:block;width:auto;max-width:100%;max-height:min(42vh,400px);aspect-ratio:16/9;object-fit:contain;margin:0 auto;border-radius:14px;background:var(--line);box-shadow:var(--shadow)}
 .ln{display:grid;grid-template-columns:36px 1fr 34px;gap:12px;padding:12px 18px;align-items:start;border-bottom:1px solid var(--line);transition:background .2s}
 .ln:last-child{border-bottom:0}
 .ln.now{background:var(--blue-soft)}
@@ -876,6 +878,9 @@ function parseCloze(text){
 const clozeFull=e=>e.audioText||e.lines.map(l=>l.map(s=>typeof s==="string"?s:s.a[0]).join("")).join(" ");
 /* extra book-style exercises added to a lesson section from separate data files */
 function CZ(n,sec,src){ const L=LESSONS[n]; if(!L) return; const st=L.steps.find(s=>s.k==="practice"&&s.sec===sec); if(st) st.ex.push(...parseEx(src)); else console.warn("CZ: no section",n,sec); }
+/* illustrations (img/*.webp): scene picture per lesson + picture exercises ("opisz zdjęcie") */
+const SCENE_IMG={};
+function PIC(n,sec,file,src){ const L=LESSONS[n]; if(!L) return; const st=L.steps.find(s=>s.k==="practice"&&s.sec===sec); const xs=parseEx(src); xs.forEach(e=>e.img=file); if(st) st.ex.push(...xs); else console.warn("PIC: no section",n,sec); }
 const SEC_LABEL={scene:"Диалог",grammar:"Грамматика",vocab:"Słówka",text:"Текст"};
 function LX(d){
   const L={id:d.n,title:d.title,ru:d.ru,intro:d.intro||"",goals:d.goals||[],who:d.who||[],vocab:parseVocab(d.vocab),dict:d.dict||{},steps:[{k:"intro",label:"Введение"}]};
@@ -1163,7 +1168,7 @@ function vReading(el,step,L){
 function vScene(el,step,L){
   const i=step.i, sc=step.scene||L.scenes[i], D=dictOf(L);
   el.innerHTML=head(`Раздел ${step.sec} · ${sc.place}`,sc.pl,sc.ru,step.sec)+
-  `<div class="scene ${S.tr?"":"hide-tr"}" id="scene"><div class="flagline"></div>
+  `<div class="scene ${S.tr?"":"hide-tr"}" id="scene"><div class="flagline"></div>${SCENE_IMG[L.id]?`<img class="scimg" src="img/${SCENE_IMG[L.id]}.webp" alt="${esc(sc.desc||sc.pl)}" loading="lazy">`:""}
     <div class="scene-h"><p>${sc.desc}</p>
       <div class="row"><button class="btn primary" data-act="playscene" data-i="${i}">${ICON_PLAY} Слушать диалог</button>
       <button class="toggle" data-act="tr" aria-pressed="${S.tr}">Перевод</button>
@@ -1289,7 +1294,7 @@ function vPractice(el,step,L){
   P.answered=false;
   el.innerHTML=`<div class="stack"><div class="task-h"><span class="sec-badge">${step.sec}</span><span class="eyebrow">Задания к разделу ${step.sec} · ${Math.min(P.pos+1,P.q.length)} из ${P.q.length}${retry?" · исправляем ошибку":""}</span></div>
     <div class="exp" aria-label="Прогресс"><div style="width:${Math.round(P.pos/P.q.length*100)}%"></div></div>
-    ${e.pl?`<p class="exq">${e.pl}</p><p class="exq-ru">${e.q}</p>`:`<p class="exq">${e.q}</p>`}<div id="exb" class="stack"></div></div>`;
+    ${e.img?`<img class="eximg" src="img/${e.img}.webp" alt="Картинка к заданию">`:""}${e.pl?`<p class="exq">${e.pl}</p><p class="exq-ru">${e.q}</p>`:`<p class="exq">${e.q}</p>`}<div id="exb" class="stack"></div></div>`;
   const b=document.getElementById("exb");
   if(["mcq","fill","listen"].includes(e.t)){
     let top="";
@@ -7283,6 +7288,23 @@ VREF({n:"Tryb rozkazujący",ru:"повелительное наклонение"
 t:"Bezokolicznik;ty;my;wy|robić;rób;róbmy;róbcie|pisać;pisz;piszmy;piszcie|iść;idź;idźmy;idźcie|być;bądź;bądźmy;bądźcie"});
 VREF({n:"Tryb przypuszczający",ru:"условное наклонение",key:"TRYB PRZYPUSZCZAJĄCY",
 t:"Osoba;rodzaj męski;rodzaj żeński|ja;chciałbym;chciałabym|ty;chciałbyś;chciałabyś|on / ona;chciałby;chciałaby|my;chcielibyśmy;chciałybyśmy|oni / one;chcieliby;chciałyby"});
+
+</script>
+<script>/* z_pics.js */
+/* Illustrations generated in Gemini (see images/ПРОБНЫЕ_КАРТИНКИ.md). Files: img/<name>.webp.
+   SCENE_IMG[n] — picture above the lesson dialog.
+   PIC(n, section, file, exercises) — exercises shown with a picture ("Opisz zdjęcie"). */
+Object.assign(SCENE_IMG,{3:"l03_dialog",4:"l04_dialog",15:"l15_opisz",24:"l24_dialog"});
+
+PIC(15,"C","l15_opisz",`mcq|Посмотрите на картинку. Что стоит рядом с Максом?|Tramwaj.;Kościół.;Krasnal.|2|Obok Maksa stoi mały krasnal.
+mcq|Посмотрите на картинку. Что справа?|Kościół.;Kawiarnia.;Fontanna.|1|Po prawej stronie jest kawiarnia.
+cloze|Proszę opisać zdjęcie.|Вставьте слова в описание картинки|Maks czeka obok [fontanny]. // Po lewej stronie jest [kościół]. // Po prawej stronie jest kawiarnia, a obok kawiarni jedzie [tramwaj]. // Na Rynku jest też [ratusz]. // Obok Maksa stoi mały [krasnal].|bank`);
+
+PIC(24,"D","l24_opisz",`mcq|Посмотрите на картинку. Что надето на пожилом мужчине слева?|Czerwona kurtka i czarne spodnie.;Żółta kurtka i dżinsy.;Brązowy płaszcz i zielony szalik.|2|Starszy pan ma na sobie brązowy płaszcz i zielony szalik.
+mcq|Посмотрите на картинку. Кто в красной куртке?|Starszy pan.;Kobieta.;Młody mężczyzna.|1|Kobieta ma na sobie czerwoną kurtkę.
+mcq|Посмотрите на картинку. Что надето на молодом мужчине справа?|Żółta kurtka i dżinsy.;Brązowy płaszcz i szalik.;Czerwona kurtka i białe buty.|0|Młody mężczyzna ma na sobie żółtą kurtkę i niebieskie dżinsy.
+cloze|Proszę opisać zdjęcie.|Mieć na sobie + винительный падеж|Na przystanku czekają trzy osoby. // Starszy pan ma na sobie brązowy [płaszcz] i zielony [szalik]. // Kobieta ma na sobie czerwoną [kurtkę], czarne [spodnie] i białe [buty]. // Młody mężczyzna ma na sobie żółtą [kurtkę] i niebieskie [dżinsy].|bank
+type|Посмотрите на картинку и напишите по-польски: «На женщине красная куртка» (через mieć na sobie)|Kobieta ma na sobie czerwoną kurtkę.;Ona ma na sobie czerwoną kurtkę.;Ma na sobie czerwoną kurtkę.|mieć na sobie + винительный: czerwona kurtka → czerwoną kurtkę.`);
 
 </script>
 <script>boot();</script>

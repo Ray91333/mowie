@@ -10,11 +10,13 @@ key_file = pathlib.Path.home() / ".gemini_key"
 if not key_file.exists():
     raise SystemExit("Нет файла с ключом: " + str(key_file))
 KEY = key_file.read_text(encoding="utf-8-sig").strip()
-if not KEY.startswith("AIza"):
-    raise SystemExit("Файл с ключом есть, но ключ выглядит странно (должен начинаться на AIza).")
+if len(KEY) < 30 or " " in KEY:
+    raise SystemExit("Файл с ключом есть, но ключ выглядит странно (слишком короткий или с пробелами).")
 
 API = "https://generativelanguage.googleapis.com/v1beta"
-MODELS = ["gemini-pro-latest", "gemini-flash-latest", "gemini-flash-lite-latest"]
+import os
+# Pro has no free quota (limit: 0); Lite is too weak for proofreading. Override: set GEMINI_MODEL=...
+MODELS = [os.environ["GEMINI_MODEL"]] if os.environ.get("GEMINI_MODEL") else ["gemini-flash-latest", "gemini-pro-latest"]
 
 
 def call(model, text, tries=6):
@@ -30,9 +32,9 @@ def call(model, text, tries=6):
             return "".join(p.get("text", "") for p in parts if not p.get("thought")).strip()
         except urllib.error.HTTPError as e:
             msg = e.read().decode("utf-8", "replace")[:300]
-            if e.code == 429 and "limit: 0" not in msg and i < tries - 1:
+            if e.code in (429, 500, 503) and "limit: 0" not in msg and i < tries - 1:
                 wait = 30 * (i + 1)
-                print(f"    лимит запросов, жду {wait} с…")
+                print(f"    {e.code}: {'занято' if e.code != 429 else 'лимит'}, жду {wait} с…", flush=True)
                 time.sleep(wait)
                 continue
             raise RuntimeError(f"HTTP {e.code}: {msg}")
@@ -42,7 +44,7 @@ def call(model, text, tries=6):
 def pick_model():
     for m in MODELS:
         try:
-            call(m, "Odpowiedz jednym słowem: tak.", tries=1)
+            call(m, "Odpowiedz jednym słowem: tak.", tries=8)
             return m
         except RuntimeError as e:
             print(f"  {m}: недоступна ({str(e)[:80]})")
