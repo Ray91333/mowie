@@ -29,7 +29,7 @@ type|Напишите по-польски: «Я еду на работу»|jadę
 {k:"grammar",lab:"Дорога",title:"Prosto, w lewo, do + родительный",sub:"Слова для дороги и предлог do (куда).",
 body:[{ex:"prosto=прямо|w prawo=направо|w lewo=налево|skręcić=повернуть|obok=рядом с|naprzeciwko=напротив|blisko=близко|daleko=далеко|na rogu=на углу"},
 {h:"do + родительный падеж"},
-{t:"Куда?;Пример|do domu;домой|do pracy;на работу|do Rynku;на Рынок|do szkoły;в школу|do Krakowa;в Краков|do kina;в кино"},
+{t:"Куда?;Пример|do domu;домой|do pracy;на работу|do parku;в парк|do szkoły;в школу|do Krakowa;в Краков|do kina;в кино"},
 {note:"После <span class='pl'>obok</span>, <span class='pl'>naprzeciwko</span>, <span class='pl'>blisko</span> тоже нужен родительный: <span class='pl'>obok fontanny, naprzeciwko ratusza, blisko dworca</span>."},
 {trap:"<span class='pl'>do pracy</span> — «на работу», хотя в русском предлог «на». Польское <span class='pl'>do</span> значит «внутрь, к».",lb:"Ловушка для русскоязычных"}],
 ex:`mcq|Что значит «w prawo»?|направо;правильно;налево|0|w prawo — направо, w lewo — налево.|w prawo
@@ -80,8 +80,8 @@ ex:`mcq|Что в посылке?|dwie książki, pięć czekolad i kawa;trzy ko
 mcq|Сколько идёт посылка?|około dziesięciu dni;trzy dni;tydzień|0|Około dziesięciu dni — около десяти дней.
 listen|Послушайте и выберите перевод|Chcę wysłać paczkę.|Хочу отправить посылку.;Хочу получить посылку.;Где моя посылка?|0|wysłać — отправить.`},
 {k:"grammar",lab:"Родительный мн. ч.",title:"Dopełniacz l.mn.: родительный множественного числа",sub:"Нужен после «много», «нет», мер и чисел от 5.",
-body:[{t:"Тип;Окончание;Примеры|м. р. (большинство);-ów;list → listów, pomidor → pomidorów, znaczek → znaczków|м. р. на мягкий, cz, sz, rz;-y / -i;klucz → kluczy, pokój → pokoi|ж. р. и ср. р.;нулевое окончание;książka → książek, czekolada → czekolad, jabłko → jabłek, okno → okien|ж. р. на -ia, мягкие;-i;kuchnia → kuchni, noc → nocy"},
-"Нулевое окончание часто добавляет <b>e</b> между согласными: <span class='pl'>paczka → paczek, butelka → butelek, koperta → kopert</span>.",
+body:[{t:"Тип;Окончание;Примеры|м. р. (большинство);-ów;list → listów, pomidor → pomidorów, znaczek → znaczków|м. р. на мягкий, cz, sz, rz;-y / -i;klucz → kluczy, pokój → pokoi|ж. р. и ср. р.;нулевое окончание;książka → książek, czekolada → czekolad, jabłko → jabłek, okno → okien|ж. р. на -ia, мягкие;-i / -y;kuchnia → kuchni, noc → nocy"},
+"Нулевое окончание часто добавляет <b>e</b> между согласными: <span class='pl'>paczka → paczek, butelka → butelek, torba → toreb</span>.",
 {ex:"dużo ludzi=много людей|nie ma biletów=нет билетов|kilo truskawek=кило клубники|pięć minut=пять минут"},
 {trap:"<span class='pl'>ludzie → ludzi</span>, <span class='pl'>dzieci → dzieci</span>, <span class='pl'>pieniądze → pieniędzy</span> — частые исключения."}],
 ex:`fill|Выберите форму|Mam dużo ___.|książki;książek;książkami|1|książka → książek.
@@ -194,7 +194,7 @@ kasia|Mnie bardzo się podobał! Aktorzy grali świetnie.|Мне очень по
 maks|Moim zdaniem był za długi. Trzy godziny to dużo.|По-моему, он был слишком длинный. Три часа — это много.
 tomek|Zgadzam się z Maksem. Ale muzyka była super.|Согласен с Максом. Но музыка была супер.
 kasia|Nie zgadzam się. Myślę, że to najlepszy film roku!|Не согласна. Думаю, что это лучший фильм года!
-maks|A tobie, Tomek, co się nie podobało?|А тебе, Томек, что не понравилось?
+maks|A tobie, Tomku, co się nie podobało?|А тебе, Томек, что не понравилось?
 tomek|Koniec. Był smutny. Nie lubię smutnych filmów.|Конец. Он был грустный. Не люблю грустные фильмы.
 kasia|Wy nic nie rozumiecie! Następnym razem ja wybieram film.|Вы ничего не понимаете! В следующий раз фильм выбираю я.`,
 ex:`mcq|Что думает Макс о фильме?|był za długi;był najlepszy;był smutny|0|Maks: Moim zdaniem był za długi.

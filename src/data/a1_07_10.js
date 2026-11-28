@@ -6,7 +6,7 @@ secs:[
 {k:"scene",pl:"Nad Odrą",ru:"На берегу Одры",place:"Bulwar nad Odrą",desc:"Тёплый вечер, на набережной много людей с велосипедами.",
 lines:`diego|Co lubicie robić w wolnym czasie?|Что вы любите делать в свободное время?
 kasia|Ja lubię czytać i jeździć na rowerze. Mój rower jest stary, ale szybki.|Я люблю читать и кататься на велосипеде. Мой велосипед старый, но быстрый.
-maks|A ja gram na gitarze. I czasem gram w piłkę z kolegami z pracy.|А я играю на гитаре. И иногда играю в футбол с коллегами.
+maks|A ja gram na gitarze. I czasem gram w piłkę z kolegami z pracy.|А я играю на гитаре. И иногда играю в футбол с коллегами по работе.
 diego|Naprawdę? Ja też gram w piłkę! Ale dużo piszę i rysuję.|Правда? Я тоже играю в футбол! Но много пишу и рисую.
 kasia|Co piszesz?|Что ты пишешь?
 diego|Piszę bloga o Polsce. Po hiszpańsku, oczywiście.|Пишу блог о Польше. По-испански, конечно.
@@ -99,11 +99,11 @@ body:[{h:"chcieć — хотеть"},
 {h:"Сотни и тысяча"},
 {t:"Число;По-польски|100;sto|200;dwieście|300;trzysta|400;czterysta|500;pięćset|600;sześćset|700;siedemset|800;osiemset|900;dziewięćset|1000;tysiąc"},
 {h:"Злотые и гроши"},
-{t:"Число;Форма|1;złoty, grosz|2, 3, 4;złote, grosze|5 и больше;złotych, groszy"},
+{t:"Число;Форма|1;złoty, grosz|2, 3, 4;złote, grosze|5–21 (и 25–31, 35–41…);złotych, groszy"},
 {ex:"Ile kosztuje?=Сколько стоит?|Ile kosztują?=Сколько стоят?|To kosztuje dwa złote.=Это стоит два злотых."},
 {trap:"Цены часто говорят коротко: <span class='pl'>12,50</span> = <span class='pl'>dwanaście pięćdziesiąt</span>, без слов «złotych» и «groszy»."}],
 ex:`fill|Выберите форму|Co ___ na obiad?|chcesz;chcisz;chce|0|chcieć → ty chcesz.
-fill|Выберите форму|To kosztuje pięć ___.|złoty;złote;złotych|2|5 и больше → złotych.
+fill|Выберите форму|To kosztuje pięć ___.|złoty;złote;złotych|2|pięć → złotych. Но 22–24, 32–34… снова złote.
 listen|Какое число вы слышите?|trzysta|300;30;13|0|trzysta = 300.
 mcq|Как будет «200»?|dwieście;dwadzieścia;dwiesta|0|200 = dwieście.|dwieście`},
 {k:"vocab",ex:`match|Соедините|chleb=хлеб;mleko=молоко;masło=масло;ser=сыр;woda=вода
@@ -137,7 +137,7 @@ goals:["говорить о еде и приёмах пищи","спрягать
 secs:[
 {k:"scene",pl:"Niedzielne śniadanie",ru:"Воскресный завтрак",place:"Mieszkanie Kasi",desc:"Стол накрыт, пахнет кофе и свежим хлебом.",
 lines:`kasia|Babciu, to jest Maks, mój sąsiad.|Бабушка, это Макс, мой сосед.
-babcia|Dzień dobry, panie Maksie! Proszę, niech pan siada. Je pan jajecznicę?|Здравствуйте, пан Макс! Пожалуйста, садитесь. Будете яичницу?
+babcia|Dzień dobry, panie Maksie! Proszę, niech pan siada. Zje pan jajecznicę?|Здравствуйте, пан Макс! Пожалуйста, садитесь. Будете яичницу?
 maks|Bardzo chętnie! Dziękuję.|С удовольствием! Спасибо.
 kasia|Co pijesz? Kawę czy herbatę?|Что будешь пить? Кофе или чай?
 maks|Herbatę z cytryną, poproszę.|Чай с лимоном, пожалуйста.
@@ -147,7 +147,7 @@ babcia|To smacznego!|Тогда приятного аппетита!
 maks|Dziękuję, nawzajem!|Спасибо, взаимно!
 kasia|Babcia zawsze robi za dużo jedzenia. Na obiad też zostaniesz?|Бабушка всегда готовит слишком много еды. На обед тоже останешься?`,
 ex:`mcq|Что пьёт Макс?|kawę z mlekiem;herbatę z cytryną;sok|1|Maks pije herbatę z cytryną.
-mcq|Что отвечают на «Smacznego!»?|Dziękuję, nawzajem!;Na zdrowie!;Do widzenia!|0|Smacznego! — приятного аппетита. Отвечают: Dziękuję, nawzajem! (спасибо, взаимно).|Dziękuję, nawzajem!
+mcq|Что отвечают на «Smacznego!»?|Dziękuję, nawzajem!;Na zdrowie!;Do widzenia!|0|Smacznego! — приятного аппетита. Если собеседник тоже ест, отвечают: Dziękuję, nawzajem! (спасибо, взаимно). Официанту — просто Dziękuję!|Dziękuję, nawzajem!
 listen|Послушайте и выберите перевод|Wszystko wygląda pysznie!|Всё выглядит очень вкусно!;Всё очень дорого!;Всё уже готово!|0|pyszny — очень вкусный.`},
 {k:"grammar",lab:"jeść, pić",title:"Jeść i pić",sub:"Два неправильных глагола, без которых не обойтись за столом.",
 body:[{h:"jeść — есть"},
@@ -162,7 +162,7 @@ fill|Выберите форму|Oni ___ obiad o piętnastej.|jedzą;jeją;jedą
 fill|Выберите форму|Ja ___ kawę bez cukru.|piję;pije;piję się|0|pić → ja piję.
 mcq|Что такое «kolacja»?|ужин;завтрак;обед|0|kolacja — ужин.|kolacja`},
 {k:"grammar",lab:"z + творительный",title:"Z czym? С чем?",sub:"Предлог z (с) требует творительного падежа, как в русском.",
-body:[{t:"Род;Окончание;Пример|м. р. / ср. р.;-em;z serem, z mlekiem, z masłem|ж. р.;-ą;z cytryną, z szynką|мн. ч.;-ami;z pomidorami, z jajkami"},
+body:[{t:"Род;Окончание;Пример|м. р. / ср. р.;-em (после k, g: -iem);z serem, z mlekiem, z masłem|ж. р.;-ą;z cytryną, z szynką|мн. ч.;-ami;z pomidorami, z jajkami"},
 {ex:"kanapka z serem=бутерброд с сыром|herbata z cytryną=чай с лимоном|kawa z mlekiem=кофе с молоком|makaron z warzywami=макароны с овощами"},
 {note:"Перед сложными сочетаниями согласных z превращается в <span class='pl'>ze</span>: <span class='pl'>ze mną</span> (со мной), <span class='pl'>ze szpinakiem</span> (со шпинатом)."},
 {trap:"«Без» — <span class='pl'>bez</span> + родительный: <span class='pl'>kawa bez cukru</span> (кофе без сахара). Мы вернёмся к нему в уроке 11."}],

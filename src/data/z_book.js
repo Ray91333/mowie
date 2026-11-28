@@ -14,7 +14,7 @@ CZ(3,"C",`cloze|Proszę napisać liczby słowami.|Напишите числа с
 CZ(4,"B",`cloze|Proszę uzupełnić: ten, ta, to.|Вставьте ten, ta или to|[Ten] stół jest duży. // [Ta] lampa jest stara. // [To] okno jest nowe. // [Ten] kubek jest czerwony. // [Ta] książka jest ciekawa.|bank`);
 CZ(4,"C",`cloze|Proszę uzupełnić końcówki.|Допишите окончания прилагательных|To jest now[y] telefon. // To jest now[a] torba. // To jest now[e] krzesło. // Ta lampa jest ładn[a]. // To mieszkanie jest jasn[e].`);
 
-CZ(5,"B",`cloze|Proszę uzupełnić końcówki.|Допишите окончания (-ę, -isz, -i, -imy, -icie, -ą)|Ja mówi[ę] po polsku. // Ty rob[isz] obiad? // Kasia lub[i] kawę. // My ucz[ymy] się polskiego. // Wy mów[icie] po hiszpańsku? // Oni myśl[ą] o pracy.`);
+CZ(5,"B",`cloze|Proszę uzupełnić końcówki.|Допишите окончания (-ę, -isz / -ysz, -i / -y, -imy / -ymy, -icie / -ycie, -ą)|Ja mówi[ę] po polsku. // Ty rob[isz] obiad? // Kasia lub[i] kawę. // My ucz[ymy] się polskiego. // Wy mów[icie] po hiszpańsku? // Oni myśl[ą] o pracy.`);
 CZ(5,"C",`cloze|Proszę uzupełnić końcówki.|Допишите окончания прилагательных|Marta jest wesoł[a]. // Bartek jest spokojn[y]. // Moja babcia jest mądr[a]. // Tomek jest wysok[i].`);
 
 CZ(6,"B",`cloze|Proszę uzupełnić końcówki.|Творительный падеж после być|Tomek jest programist[ą]. // Kasia jest student[ką]. // Mój brat jest lekarz[em]. // Jestem tester[em]. // Ania jest nasz[ą] szefow[ą].`);
@@ -41,7 +41,7 @@ CZ(12,"C",`cloze|Proszę uzupełnić tekst.|Вставьте слова о ча�
 CZ(13,"B",`cloze|Proszę uzupełnić końcówki.|O której? — окончание -ej|Lekcja jest o ósm[ej]. // Jest wpół do dziewiąt[ej]. // Spotkajmy się o szóst[ej]. // Koncert jest o dwudziest[ej].`);
 CZ(13,"C",`cloze|Proszę uzupełnić.|Вставьте w или we и окончание дня недели|[W] poniedziałek pracuję. // [We] wtorek mam lekcję. // W środ[ę] gram w piłkę. // W sobot[ę] odpoczywam.|bank`);
 
-CZ(14,"B",`cloze|Proszę uzupełnić końcówki.|Прошедшее время|Wczoraj (Maks) oglądał[em] film. // Kasia był[a] w kinie. // Co robił[eś], Tomek? // My byli[śmy] w ZOO. // Kasiu, gotował[aś] obiad?`);
+CZ(14,"B",`cloze|Proszę uzupełnić końcówki.|Прошедшее время|Wczoraj (Maks) oglądał[em] film. // Kasia był[a] w kinie. // Co robił[eś], Tomku? // My byli[śmy] w ZOO. // Kasiu, gotował[aś] obiad?`);
 CZ(14,"C",`cloze|Proszę uzupełnić tekst.|Вставьте глаголы в прошедшем времени|W sobotę Tomek [był] w górach. // Kasia [jadła] zupę. // W niedzielę [poszliśmy] do kina. // Maks [miał] dużo pracy.|bank|była`);
 
 CZ(15,"B",`cloze|Proszę uzupełnić zdania.|Вставьте idę, chodzę, jadę или jeżdżę|Teraz [idę] do pracy. // Codziennie [chodzę] na basen. // Zwykle [jeżdżę] tramwajem. // Jutro [jadę] do Krakowa.|bank`);
@@ -75,7 +75,7 @@ CZ(24,"B",`cloze|Proszę uzupełnić zdania.|Степени сравнения|T
 CZ(24,"C",`cloze|Proszę uzupełnić zdania.|Одежда|Mam na [sobie] czarny sweter. // Ta kurtka jest [za] mała. // Mogę [przymierzyć]? // Wyglądasz [świetnie]!|bank`);
 
 CZ(25,"B",`cloze|Proszę uzupełnić zdania.|У врача|[Boli] mnie głowa. // [Bolą] mnie plecy. // Co [cię] boli? // [Mam] gorączkę.|bank`);
-CZ(25,"C",`cloze|Proszę uzupełnić końcówki.|powinien, powinna…|Maks, powinie[neś] odpoczywać. // Kasia powinn[a] pić dużo wody. // (Kasia o sobie) Powinn[am] iść do lekarza.`);
+CZ(25,"C",`cloze|Proszę uzupełnić końcówki.|powinien, powinna…|Maks, powinien[eś] odpoczywać. // Kasia powinn[a] pić dużo wody. // (Kasia o sobie) Powinn[am] iść do lekarza.`);
 
 CZ(26,"B",`cloze|Proszę uzupełnić końcówki.|Условное наклонение|(Maks) Chciał[bym] kawę. // (Kasia) Chciała[bym] herbatę. // Czy mógł[by] pan mi pomóc? // Maks, mógł[byś] zamknąć okno?`);
 CZ(26,"C",`cloze|Proszę uzupełnić końcówki.|Повторение падежей A1|Nie mam czas[u]. // Jadę tramwaj[em]. // Mieszkam w Krakow[ie]. // Daję prezent mam[ie]. // Kasi[u], chodź tutaj!`);

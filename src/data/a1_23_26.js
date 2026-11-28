@@ -77,7 +77,7 @@ listen|Послушайте и выберите перевод|Gdzie jest przymi
 {k:"grammar",lab:"Сравнение",title:"Tańszy, najtańszy: степени сравнения",sub:"Сравнительная степень: -szy / -ejszy. Превосходная: naj- + сравнительная.",
 body:[{t:"Прилагательное;Сравнительная;Превосходная|tani (дешёвый);tańszy;najtańszy|drogi (дорогой);droższy;najdroższy|ciepły (тёплый);cieplejszy;najcieplejszy|ładny (красивый);ładniejszy;najładniejszy|młody (молодой);młodszy;najmłodszy|duży (большой);większy;największy|mały (маленький);mniejszy;najmniejszy|dobry (хороший);lepszy;najlepszy|zły (плохой);gorszy;najgorszy"},
 {ex:"Ta kurtka jest tańsza niż tamta.=Эта куртка дешевле, чем та.|To najlepszy sklep w mieście.=Это лучший магазин в городе.|Mój brat jest młodszy ode mnie.=Мой брат младше меня."},
-{note:"Длинные прилагательные часто сравнивают описательно: <span class='pl'>bardziej interesujący</span> (более интересный), <span class='pl'>najbardziej</span> (самый)."},
+{note:"Длинные прилагательные часто сравнивают описательно: <span class='pl'>bardziej interesujący</span> (более интересный), <span class='pl'>najbardziej interesujący</span> (самый интересный)."},
 {trap:"«Чем» — <span class='pl'>niż</span> + именительный или <span class='pl'>od</span> + родительный: <span class='pl'>wyższy niż ja = wyższy ode mnie</span>."}],
 ex:`fill|Выберите форму|Ta kurtka jest ___ niż tamta.|tańsza;tanisza;bardziej tania|0|tani → tańszy / tańsza.
 fill|Выберите форму|To ___ pizza w mieście!|najlepsza;najdobrsza;lepsza|0|dobry → najlepszy (неправильная форма).

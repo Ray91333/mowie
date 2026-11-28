@@ -12,7 +12,7 @@ tomek|To poproszę z kapustą i grzybami.|Тогда с капустой и гр
 maks|A ja chcę schabowego z ziemniakami i surówką.|А я хочу отбивную с картошкой и салатом.
 kel|Coś do picia?|Что-нибудь выпить?
 kasia|Poproszę kompot. Wieczorem nie piję kawy.|Компот, пожалуйста. Вечером я не пью кофе.
-maks|A my dwa piwa. Tomek, idziesz ze mną potem na koncert?|А нам два пива. Томек, пойдёшь со мной потом на концерт?
+maks|A dla nas dwa piwa. Tomek, idziesz ze mną potem na koncert?|А нам два пива. Томек, пойдёшь со мной потом на концерт?
 tomek|Niestety, nie mam czasu. Jutro rano jadę w góry.|К сожалению, у меня нет времени. Завтра утром еду в горы.`,
 ex:`mcq|Почему Томек не заказывает мясо?|nie je mięsa;nie ma czasu;nie lubi pierogów|0|Tomek nie je mięsa — он вегетарианец.
 mcq|Что пьёт Кася?|kawę;kompot;piwo|1|Kasia pije kompot. Wieczorem nie pije kawy.
@@ -75,7 +75,7 @@ kasia|Tak, to Piotrek. Mieszka w Londynie. Rzadko przyjeżdża do domu.|Да, э
 maks|Często do niego dzwonisz?|Часто ему звонишь?
 kasia|W każdą niedzielę wieczorem. A ty masz rodzeństwo?|Каждое воскресенье вечером. А у тебя есть братья или сёстры?
 maks|Mam młodszego brata. Moi rodzice mieszkają w Charkowie. Dzwonię do nich codziennie.|У меня есть младший брат. Мои родители живут в Харькове. Звоню им каждый день.
-kasia|Codziennie? Ja nigdy nie dzwonię do rodziców codziennie!|Каждый день? Я никогда не звоню родителям каждый день!`,
+kasia|Codziennie? Ja nie dzwonię do rodziców codziennie!|Каждый день? Я не звоню родителям каждый день!`,
 ex:`mcq|Где живёт брат Каси?|w Gdańsku;w Londynie;w Charkowie|1|Piotrek mieszka w Londynie.
 mcq|Как часто Макс звонит родителям?|codziennie;rzadko;w niedzielę|0|Maks dzwoni do rodziców codziennie.
 listen|Послушайте и выберите перевод|Masz rodzeństwo?|У тебя есть братья или сёстры?;У тебя есть семья?;У тебя есть родители?|0|rodzeństwo — братья и сёстры вместе.`},
@@ -197,7 +197,7 @@ maks|W sobotę byłem z Kasią w ZOO. Widzieliśmy słonie i pingwiny.|В суб
 tomek|A w niedzielę?|А в воскресенье?
 maks|Spałem do jedenastej, potem gotowałem i oglądałem film.|Спал до одиннадцати, потом готовил и смотрел фильм.
 tomek|Co jadłeś? Znowu pierogi?|Что ты ел? Опять вареники?
-maks|Nie! Zrobiłem barszcz ukraiński. Kasia jadła dwa talerze!|Нет! Я сварил украинский борщ. Кася съела две тарелки!`,
+maks|Nie! Zrobiłem barszcz ukraiński. Kasia zjadła dwa talerze!|Нет! Я сварил украинский борщ. Кася съела две тарелки!`,
 ex:`mcq|Где был Томек?|w Karkonoszach;w ZOO;nad morzem|0|Tomek był w Karkonoszach.
 mcq|Что делал Макс в воскресенье?|spał, gotował, oglądał film;był w górach;był w ZOO|0|W niedzielę Maks spał, gotował i oglądał film.
 listen|Послушайте и выберите перевод|Jak było w górach?|Как было в горах?;Где горы?;Ты был в горах?|0|Jak było? — как было?`},
@@ -211,14 +211,14 @@ body:[{h:"robić → robi- + ł + окончание"},
 ex:`fill|Выберите форму (говорит Макс)|Wczoraj ___ film.|oglądałem;oglądałam;oglądał|0|Мужчина о себе: -łem.
 fill|Выберите форму (говорит Кася)|W sobotę ___ w kinie.|byłem;byłam;była|1|Женщина о себе: -łam.
 fill|Выберите форму|Tomek ___ w górach.|był;była;było|0|on → był.
-fill|Выберите форму|Co ty ___, Kasia?|robiłeś;robiłaś;robiła|1|Кася — женщина: robiłaś.
+fill|Выберите форму|Co ty ___, Kasiu?|robiłeś;robiłaś;robiła|1|Кася — женщина: robiłaś.
 type|Напишите по-польски (мужчина): «Я готовил обед»|gotowałem obiad|gotować → gotowa + łem.`},
 {k:"grammar",lab:"być, mieć, jeść, iść",title:"Być, mieć, jeść, iść в прошедшем",sub:"Самые частые глаголы и несколько неправильных форм.",
 body:[{t:"Глагол;on;ona;oni;ja (м.)|być;był;była;byli;byłem|mieć;miał;miała;mieli;miałem|jeść;jadł;jadła;jedli;jadłem|iść;szedł;szła;szli;szedłem|pójść;poszedł;poszła;poszli;poszedłem"},
 {ex:"Byłem w pracy.=Я был на работе.|Miałam dużo pracy.=У меня было много работы.|Co jadłeś?=Что ты ел?|Poszliśmy do kina.=Мы пошли в кино."},
 {note:"«Мы видели» — <span class='pl'>widzieliśmy</span>: глаголы на -eć меняют e на a в единственном числе (<span class='pl'>widział, miał</span>), но оставляют e во множественном (<span class='pl'>widzieli, mieli</span>)."},
 {trap:"«Был» о погоде, событиях — средний род: <span class='pl'>Jak było?</span> (как было?), <span class='pl'>Było super!</span>"}],
-ex:`fill|Выберите форму|Gdzie ___ wczoraj, Tomek?|byłeś;byłaś;był|0|ty (мужчина) → byłeś.
+ex:`fill|Выберите форму|Gdzie ___ wczoraj, Tomku?|byłeś;byłaś;był|0|ty (мужчина) → byłeś.
 fill|Выберите форму|Kasia ___ dwa talerze zupy.|jadła;jadł;jedła|0|jeść → ona jadła.
 fill|Выберите форму|My ___ do kina.|poszliśmy;poszłyśmy;poszedł|0|Группа с мужчиной: poszliśmy.
 mcq|Как сказать «Было здорово!»?|Było super!;Był super!;Była super!|0|Безличное «было» — средний род: było.|Było super!`},

@@ -17,7 +17,7 @@ ex:`mcq|Где чайник?|w kuchni, przy oknie;w łazience;w pokoju na stole|
 mcq|Где сахар?|w lodówce;w szafce;na półce|0|Cukier jest w lodówce.
 listen|Послушайте и выберите перевод|Mogę zrobić herbatę?|Можно я сделаю чай?;Где чай?;Ты хочешь чай?|0|Mogę…? — можно мне…?`},
 {k:"grammar",lab:"Предложный падеж",title:"Miejscownik: o kim? o czym? gdzie?",sub:"Предложный падеж употребляется только с предлогами: w, na, przy, o, po.",
-body:[{t:"Тип;Окончание;Примеры|м. р. и ср. р. на твёрдый согласный;-e (с чередованием*);stół → na stole, okno → w oknie, miasto → w mieście, biuro → w biurze|м. р. и ср. р. на k, g, ch, мягкие (и исключения dom, syn);-u;park → w parku, pokój → w pokoju, dom → w domu|ж. р. на твёрдый согласный + -a;-e (с чередованием);szafa → w szafie, szkoła → w szkole, Polska → w Polsce|ж. р. на -ka, -ga, мягкие, -ia;-i / -y;kuchnia → w kuchni, ulica → na ulicy, praca → w pracy|мн. ч. (все);-ach;pokoje → w pokojach, półki → na półkach"},
+body:[{t:"Тип;Окончание;Примеры|м. р. и ср. р. на твёрдый согласный;-e (с чередованием*);stół → na stole, okno → w oknie, miasto → w mieście, biuro → w biurze|м. р. и ср. р. на k, g, ch, мягкие (и исключения dom, syn);-u;park → w parku, pokój → w pokoju, dom → w domu|ж. р. на твёрдый согласный + -a;-e (с чередованием);szafa → w szafie, szkoła → w szkole, Polska → w Polsce|ж. р. на мягкий согласный, -ia, -ca;-i / -y;kuchnia → w kuchni, ulica → na ulicy, praca → w pracy|мн. ч. (все);-ach;pokoje → w pokojach, półki → na półkach"},
 "* Перед -e согласные смягчаются: <b>t → ci</b> (miasto → w mieście), <b>r → rz</b> (biuro → w biurze), <b>ł → l</b> (stół → na stole), <b>k → c</b> (Polska → w Polsce).",
 {ex:"Jestem w domu.=Я дома.|Mieszkam w Polsce.=Я живу в Польше.|Książka jest na stole.=Книга на столе.|Pracuję w biurze.=Я работаю в офисе."},
 {trap:"Чередования в польском похожи на русские («рука — в руке»), но звучат иначе: <span class='pl'>noga → na nodze, ręka → w ręce</span>. Их лучше учить вместе с фразой."}],
@@ -145,7 +145,7 @@ ex:`fill|Выберите|Latem jedziemy ___.|nad morze;nad morzem;na morze|0|К
 fill|Выберите|W sobotę byłem ___.|w górach;w góry;na górach|0|Где? → w górach.
 fill|Выберите|Jadę ___ Gdańska.|do;w;na|0|Город, куда? → do + род. п.
 fill|Выберите|Jestem ___ Kasi.|u;do;w|0|У человека: u + род. п.
-type|Напишите по-польски: «Я еду в Краков»|jadę do krakowa|do Krakowa — в Краков.`},
+type|Напишите по-польски: «Я еду в Краков»|Jadę do Krakowa.|do Krakowa — в Краков.`},
 {k:"grammar",lab:"Вокзал и стороны света",title:"Na dworcu. Północ, południe…",sub:"Полезные слова на вокзале и стороны света.",
 body:[{ex:"bilet normalny=полный билет|bilet ulgowy=льготный билет|w jedną stronę=в одну сторону|tam i z powrotem=туда и обратно|peron=платформа|tor=путь|odjazd=отправление|przyjazd=прибытие|opóźnienie=опоздание (поезда)|przesiadka=пересадка"},
 {t:"Сторона;Где?;Пример|północ (север);na północy;Gdańsk jest na północy Polski.|południe (юг);na południu;Zakopane jest na południu.|wschód (восток);na wschodzie;Lublin jest na wschodzie.|zachód (запад);na zachodzie;Wrocław jest na zachodzie."},
@@ -202,7 +202,7 @@ listen|Послушайте и выберите перевод|Wszystkiego najle
 body:[{t:"Дата;Как сказать|1.05;pierwszego maja|3.01;trzeciego stycznia|8.03;ósmego marca|11.11;jedenastego listopada|25.12;dwudziestego piątego grudnia"},
 {t:"Месяц;Им. п.;Род. п. (в дате)|январь;styczeń;stycznia|февраль;luty;lutego|март;marzec;marca|апрель;kwiecień;kwietnia|май;maj;maja|июнь;czerwiec;czerwca|июль;lipiec;lipca|август;sierpień;sierpnia|сентябрь;wrzesień;września|октябрь;październik;października|ноябрь;listopad;listopada|декабрь;grudzień;grudnia"},
 {ex:"Którego jest dzisiaj?=Какое сегодня число?|Dzisiaj jest pierwszy maja.=Сегодня первое мая.|Urodziłem się trzeciego stycznia.=Я родился третьего января.|Kiedy masz urodziny?=Когда у тебя день рождения?"},
-{note:"Год: <span class='pl'>w dwa tysiące dwudziestym szóstym roku</span> — в 2026 году. Последняя цифра — порядковое числительное в предложном падеже."},
+{note:"Год: <span class='pl'>w dwa tysiące dwudziestym szóstym roku</span> — в 2026 году. Десятки и единицы — порядковые числительные в предложном падеже (dwudziestym szóstym), тысячи — обычное число (dwa tysiące)."},
 {h:"Поздравления"},
 {ex:"Wszystkiego najlepszego!=Всего наилучшего!|z okazji urodzin=по случаю дня рождения|z okazji imienin=по случаю именин|Sto lat!=Сто лет! (пожелание и песня)|Zdrowia, szczęścia!=Здоровья, счастья!"}],
 ex:`mcq|Как сказать «первого мая»?|pierwszego maja;pierwszy maj;pierwszym maju|0|Дата: родительный падеж.|pierwszego maja

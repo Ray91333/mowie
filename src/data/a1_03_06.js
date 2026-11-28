@@ -50,7 +50,7 @@ gdzie|где|Gdzie mieszkasz?|Где ты живёшь?
 mieszkać|жить|Mieszkam we Wrocławiu.|Я живу во Вроцлаве.
 mieć|иметь, у меня есть|Mam małe mieszkanie.|У меня маленькая квартира.
 znać|знать (кого-то, что-то)|Znam Natalię.|Я знаю Наталью.
-czekać na|ждать кого / что|Czekam na Diego.|Я жду Диего.
+czekać na|ждать кого / что|Czekam na Diega.|Я жду Диего.
 pytać o|спрашивать о|Pytam o adres.|Я спрашиваю адрес.
 # Город и адрес
 ulica|улица|Mieszkam na ulicy Pomorskiej.|Я живу на улице Поморской.
@@ -88,7 +88,7 @@ body:[{t:"Род;Окончание;Примеры;Указательное|му
 {ex:"Ten telefon jest nowy.=Этот телефон новый.|Ta lampa jest stara.=Эта лампа старая.|To okno jest duże.=Это окно большое."},
 {h:"To jest… — это…"},"Чтобы просто показать на предмет, используют <span class='pl'>to jest</span> для любого рода: <span class='pl'>To jest lampa. To jest stół.</span> Вопросы: <span class='pl'>Co to jest?</span> (что это?) и <span class='pl'>Kto to jest?</span> (кто это?).",
 {trap:"Есть исключения: <span class='pl'>mężczyzna</span> (мужчина) на -a, но мужского рода; <span class='pl'>noc</span> (ночь) и <span class='pl'>rzecz</span> (вещь) женского рода, хотя без -a."},
-{trap:"Род часто не совпадает с русским: <span class='pl'>ten kubek</span> — эта кружка (м. р.), <span class='pl'>to krzesło</span> — этот стул (ср. р.), <span class='pl'>ten kwiatek</span> — этот цветок.",lb:"Ловушка для русскоязычных"}],
+{trap:"Род часто не совпадает с русским: <span class='pl'>ten kubek</span> — эта кружка (м. р.), <span class='pl'>to krzesło</span> — этот стул (ср. р.), <span class='pl'>ta kawa</span> — этот кофе (ж. р.).",lb:"Ловушка для русскоязычных"}],
 ex:`mcq|Какого рода «krzesło»?|мужского;женского;среднего|2|Окончание -o → средний род: to krzesło.|to krzesło
 fill|Выберите слово|___ szafa jest duża.|Ten;Ta;To|1|szafa на -a → ta.
 fill|Выберите слово|___ telefon jest nowy.|Ten;Ta;To|0|telefon на согласный → ten.
@@ -139,12 +139,12 @@ maks|Jaka ona jest?|Какая она?
 kasia|Jest bardzo wesoła i trochę szalona. Dużo mówi!|Она очень весёлая и немного сумасшедшая. Много говорит!
 maks|A ten wysoki chłopak?|А этот высокий парень?
 kasia|To jest Bartek. Jest spokojny i mądry. Uczy się chińskiego.|Это Бартек. Он спокойный и умный. Учит китайский.
-maks|Chińskiego? Wow. A co robisz ty w wolnym czasie?|Китайский? Ого. А что ты делаешь в свободное время?
+maks|Chińskiego? Wow. A ty co robisz w wolnym czasie?|Китайский? Ого. А ты что делаешь в свободное время?
 kasia|Rysuję i dużo myślę o architekturze. A ty?|Рисую и много думаю об архитектуре. А ты?
 maks|Ja teraz robię tylko jedno: uczę się polskiego!|Я сейчас делаю только одно: учу польский!
 kasia|I mówisz już całkiem dobrze!|И говоришь уже довольно хорошо!`,
 ex:`mcq|Какая Марта?|wesoła i trochę szalona;spokojna i mądra;smutna i cicha|0|Marta jest wesoła i trochę szalona.
-mcq|Что учит Бартек?|polski;chiński;hiszpański|1|Bartek uczy się chińskiego.
+mcq|Что учит Бартек?|polskiego;chińskiego;hiszpańskiego|1|Bartek uczy się chińskiego.
 build|Соберите фразу: «Он спокойный и умный»|Jest spokojny i mądry.|wesoła ale|Местоимение «on» можно опустить.`},
 {k:"grammar",lab:"Спряжение -ę, -isz",title:"Спряжение -ę, -isz / -ysz",sub:"Вторая большая группа: почти все глаголы на -ić и -yć.",
 body:[{h:"mówić — говорить"},
