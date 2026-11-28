@@ -38,6 +38,12 @@ def call(model, text, tries=6):
                 time.sleep(wait)
                 continue
             raise RuntimeError(f"HTTP {e.code}: {msg}")
+        except (TimeoutError, urllib.error.URLError, ConnectionError) as e:
+            if i < tries - 1:
+                print(f"    сеть/таймаут ({type(e).__name__}), повтор…", flush=True)
+                time.sleep(20)
+                continue
+            raise RuntimeError(f"сеть: {e}")
     raise RuntimeError("не удалось")
 
 

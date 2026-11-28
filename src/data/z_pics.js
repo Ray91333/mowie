@@ -1,7 +1,8 @@
 /* Illustrations generated in Gemini (see images/ПРОБНЫЕ_КАРТИНКИ.md). Files: img/<name>.webp.
    SCENE_IMG[n] — picture above the lesson dialog.
    PIC(n, section, file, exercises) — exercises shown with a picture ("Opisz zdjęcie"). */
-Object.assign(SCENE_IMG,{3:"l03_dialog",4:"l04_dialog",15:"l15_opisz",24:"l24_dialog"});
+Object.assign(SCENE_IMG,{1:"l01",2:"l02",3:"l03_dialog",4:"l04_dialog",5:"l05",6:"l06",7:"l07",8:"l08",9:"l09",10:"l10",11:"l11",12:"l12",13:"l13",14:"l14",15:"l15_opisz",16:"l16",17:"l17",18:"l18",19:"l19",20:"l20",21:"l21",24:"l24_dialog"});
+COVER_IMG="cover";
 
 PIC(15,"C","l15_opisz",`mcq|Посмотрите на картинку. Что стоит рядом с Максом?|Tramwaj.;Kościół.;Krasnal.|2|Obok Maksa stoi mały krasnal.
 mcq|Посмотрите на картинку. Что справа?|Kościół.;Kawiarnia.;Fontanna.|1|Po prawej stronie jest kawiarnia.
