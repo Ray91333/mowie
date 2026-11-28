@@ -55,13 +55,13 @@ sg:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męski;– (stół, student);-y / -i
 pl:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męskoosobowy;-i / -y / -owie / -e;-i / -y;mili studenci, panowie|niemęskoosobowy;-y / -i / -e / -a;-e;nowe lampy, okna",
 ex:"To jest Kasia.=Это Кася.|Ci studenci są z Polski.=Эти студенты из Польши."});
 CASE({key:"DOPEŁNIACZ",n:"Dopełniacz",q:"kogo? czego?",ru:"родительный падеж",
-use:"отрицание (nie ma, nie mam); do, od, bez, dla, u, z (откуда), obok; количество (dużo, kilo, 5+); принадлежность; глаголы szukać, potrzebować, życzyć, uczyć się, bać się",
-sg:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męski;-a / -u;-ego;nowego telefonu, brata|żeński;-y / -i;-ej;nowej lampy, kuchni|nijaki;-a;-ego;nowego okna",
+use:"отрицание (nie ma, nie mam, nie lubię); предлоги do, od, z (откуда), bez, dla, u, obok, koło, blisko, naprzeciwko, podczas, według; количество: dużo, mało, trochę, ile, kilo, litr, butelka, от 5 и больше (pięć książek); принадлежность (dom babci); даты (dwudziestego maja); глаголы szukać, potrzebować, życzyć, uczyć się, bać się, słuchać, używać. Мужские одушевлённые — всегда -a, у неодушевлённых -a или -u",
+sg:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męski żywotny (ludzie, zwierzęta);zawsze -a;-ego;nowego brata, psa|męski nieżywotny;-a / -u (zapamiętać);-ego;nowego telefonu, sera|męski na -a (kolega);jak żeński: -i / -y;-ego;nowego kolegi|żeński;-y / -i;-ej;nowej lampy, kuchni|nijaki;-a;-ego;nowego okna",
 pl:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męski;-ów / -y / -i;-ych / -ich;nowych telefonów|żeński;– (zero) / -i;-ych / -ich;nowych lamp, książek|nijaki;– (zero);-ych / -ich;nowych okien",
 ex:"Nie mam czasu.=У меня нет времени.|Kilo jabłek, proszę.=Кило яблок, пожалуйста.|To dom babci.=Это дом бабушки."});
 CASE({key:"CELOWNIK",n:"Celownik",q:"komu? czemu?",ru:"дательный падеж",
 use:"кому-то дать, сказать, помочь; dziękować, pomagać, ufać, życzyć; podobać się; jest mi zimno, brakuje mi",
-sg:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męski;-owi / -u (bratu, panu);-emu;nowemu koledze, Tomkowi|żeński;-e / -i / -y (как miejscownik);-ej;mamie, Kasi|nijaki;-u;-emu;dziecku",
+sg:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męski (prawie wszystkie);-owi;-emu;nowemu sąsiadowi, Tomkowi|męski: 15 wyjątków;-u;-emu;ojcu, bratu, panu, chłopcu, chłopu, Bogu, księdzu, księciu, kotu, psu, lwu, osłu, diabłu, światu, kwiatu|męski na -a;jak żeński;-emu;nowemu koledze, kierowcy|żeński;-e / -i / -y (как miejscownik);-ej;mamie, Kasi|nijaki;-u;-emu;dziecku",
 pl:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|wszystkie;-om;-ym / -im;nowym kolegom, dzieciom",
 ex:"Pomagam bratu.=Я помогаю брату.|Dziękuję ci.=Спасибо тебе.|Podoba mi się Wrocław.=Мне нравится Вроцлав."});
 CASE({key:"BIERNIK",n:"Biernik",q:"kogo? co?",ru:"винительный падеж",
@@ -75,7 +75,7 @@ sg:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męski;-em / -iem;-ym / -im;dobrym l
 pl:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|wszystkie;-ami (ludźmi, dziećmi);-ymi / -imi;z nowymi kolegami",
 ex:"Jestem programistą.=Я программист.|Kawa z mlekiem.=Кофе с молоком.|Jadę autobusem.=Еду на автобусе."});
 CASE({key:"MIEJSCOWNIK",n:"Miejscownik",q:"o kim? o czym?",ru:"предложный падеж",
-use:"только с предлогами: w, na, o, po, przy (где? о чём?)",
+use:"только с предлогами: w, na, o, po, przy (где? о чём? у чего?). Не путать: przy oknie (предложный), но obok okna (родительный) и nad oknem (творительный)",
 sg:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|męski;-e (stół → stole) / -u (dom → domu);-ym / -im;w nowym domu, na stole|żeński;-e / -i / -y;-ej;w nowej kuchni, w Polsce|nijaki;-e / -u;-ym / -im;w mieście, w biurze",
 pl:"Rodzaj;Rzeczownik;Przymiotnik;Przykład|wszystkie;-ach;-ych / -ich;w nowych pokojach",
 ex:"Mieszkam w Polsce.=Я живу в Польше.|Książka jest na stole.=Книга на столе.|Rozmawiamy o pracy.=Говорим о работе."});

@@ -16,7 +16,7 @@ mcq|Почему Макс переехал?|dostał ofertę pracy;chciał studio
 listen|Послушайте и выберите перевод|Przeprowadziłem się do Polski.|Я переехал в Польшу.;Я путешествовал по Польше.;Я провёл время в Польше.|0|przeprowadzić się — переехать (сменить место жительства).`},
 {k:"grammar",lab:"Годы",title:"W którym roku? Годы",sub:"Год — порядковое числительное в предложном падеже: w … roku.",
 body:[{t:"Год;Как сказать|1999;w tysiąc dziewięćset dziewięćdziesiątym dziewiątym roku|2000;w dwutysięcznym roku|2005;w dwa tysiące piątym roku|2021;w dwa tysiące dwudziestym pierwszym roku|2026;w dwa tysiące dwudziestym szóstym roku"},
-"В порядковую форму ставится только последняя часть числа, как в русском: «в две тысячи двадцать <b>шестом</b> году».",
+"В отличие от русского, в порядковую форму ставятся <b>и десятки, и единицы</b>: <span class='pl'>w dwa tysiące <b>dwudziestym szóstym</b> roku</span> (по-русски склоняется только последнее слово: «двадцать шестом»). Тысячи и сотни остаются обычными: <span class='pl'>tysiąc dziewięćset</span>.",
 {ex:"W którym roku się urodziłeś?=В каком году ты родился?|W dwa tysiące dwudziestym roku skończyłem szkołę.=В 2020 году я окончил школу.|w latach dziewięćdziesiątych=в девяностые годы"},
 {h:"Глаголы биографии"},
 {ex:"urodzić się=родиться|chodzić do szkoły=ходить в школу|studiować=учиться в вузе|skończyć studia=окончить учёбу|zacząć pracę=начать работу|przeprowadzić się=переехать|ożenić się / wyjść za mąż=жениться / выйти замуж"},
@@ -195,14 +195,23 @@ ex:`mcq|Когда счёт бесплатный?|jeśli wpływa pensja;zawsze;t
 mcq|Кому Макс хочет отправлять деньги?|mamie;bratu;Kasi|0|Chcę wysyłać pieniądze mamie.
 listen|Послушайте и выберите перевод|Chciałbym założyć konto.|Я хотел бы открыть счёт.;Я хотел бы закрыть счёт.;Я хотел бы снять деньги.|0|założyć konto — открыть счёт.`},
 {k:"grammar",lab:"Дательный падеж",title:"Celownik: komu? czemu?",sub:"Кому дать, помочь, сказать, позвонить… Дательный падеж существительных.",
-body:[{t:"Тип;Окончание;Примеры|м. р. (большинство);-owi;brat → bratu*, kolega → koledze, Tomek → Tomkowi, pan → panu*|ж. р. (как предложный);-e / -i / -y;mama → mamie, siostra → siostrze, Kasia → Kasi|ср. р.;-u;dziecko → dziecku|мн. ч.;-om;rodzice → rodzicom, dzieci → dzieciom"},
-"* Несколько коротких мужских слов имеют -u: <span class='pl'>bratu, panu, ojcu, kotu, psu, chłopcu</span>. Остальные — <span class='pl'>-owi</span>: <span class='pl'>Tomkowi, Maksowi, lekarzowi</span>.",
+body:[{t:"Тип;Окончание;Примеры|м. р. — почти все;-owi;Tomek → Tomkowi, Maks → Maksowi, lekarz → lekarzowi, sąsiad → sąsiadowi, dom → domowi|м. р. — 15 исключений;-u;ojciec → ojcu, brat → bratu, pan → panu, chłopiec → chłopcu, kot → kotu, pies → psu (полный список ниже)|м. р. на -a (kolega, mężczyzna, kierowca);как ж. р.;koledze, mężczyźnie, kierowcy|ж. р. (как предложный);-e / -i / -y;mama → mamie, siostra → siostrze, Kasia → Kasi|ср. р.;-u;dziecko → dziecku, okno → oknu|мн. ч. (все);-om;rodzice → rodzicom, dzieci → dzieciom, koledzy → kolegom"},
+{h:"15 исключений на -u (остальные мужские — -owi)"},
+{ex:"ojciec → ojcu=отец|brat → bratu=брат|pan → panu=господин|chłopiec → chłopcu=мальчик|chłop → chłopu=мужик, крестьянин|Bóg → Bogu=Бог|ksiądz → księdzu=ксёндз|książę → księciu=князь|kot → kotu=кот|pies → psu=пёс|lew → lwu=лев|osioł → osłu=осёл|diabeł → diabłu=чёрт|świat → światu=мир|kwiat → kwiatu=цветок"},
+"Самые нужные из них в жизни: <span class='pl'>ojcu, bratu, panu, chłopcu, kotu, psu</span>. Все остальные мужские слова — <span class='pl'>-owi</span>: <span class='pl'>Tomkowi, Maksowi, lekarzowi, sąsiadowi, szefowi</span>.",
+{h:"Прилагательные и притяжательные"},
+{t:"Род;Окончание;Пример|м. р., ср. р.;-emu;mojemu bratu, nowemu koledze, małemu dziecku|ж. р.;-ej;mojej mamie, nowej koleżance|мн. ч.;-ym / -im;moim rodzicom, polskim studentom"},
 {ex:"Daję prezent mamie.=Я дарю подарок маме.|Pomagam bratu.=Я помогаю брату.|Dziękuję panu.=Спасибо Вам (мужчине).|Kupiłem dzieciom zabawki.=Я купил детям игрушки."},
 {note:"Женский дательный совпадает с предложным: <span class='pl'>o mamie — mamie</span>, <span class='pl'>o Kasi — Kasi</span>. Учить отдельно не нужно!"}],
 ex:`fill|Выберите форму|Wysyłam pieniądze ___.|mama;mamie;mamę|1|komu? → mamie.
 fill|Выберите форму|Pomagam ___.|Tomek;Tomkowi;Tomka|1|Мужской род: -owi.
 fill|Выберите форму|Dziękuję ___ za pomoc.|pani;panią;panie|0|pani в дательном — pani.
 fill|Выберите форму|Kupiłem prezenty ___.|rodzice;rodzicom;rodziców|1|Мн. ч.: -om.
+fill|Выберите форму|Daję prezent ___ (ojciec).|ojcowi;ojcu;ojca|1|ojciec — одно из 15 исключений: ojcu.
+fill|Выберите форму|Pomagam ___ (sąsiad).|sąsiadowi;sąsiadu;sąsiada|0|sąsiad — не исключение: -owi.
+fill|Выберите форму|Dziękuję ___ (kolega).|kolegowi;kolegu;koledze|2|kolega на -a склоняется как женские: koledze.
+fill|Выберите форму|Daję jeść ___ (pies).|psowi;psu;psa|1|pies → psu (исключение).
+fill|Выберите форму|Kupiłem książkę ___ (mój brat).|mojemu bratu;mojego brata;moim bratem|0|Прилагательное -emu + bratu.
 type|Напишите по-польски: «Я помогаю брату»|pomagam bratu|brat → bratu.`},
 {k:"grammar",lab:"Глаголы с дательным",title:"Dać, pomagać, dziękować…",sub:"Глаголы, после которых нужен дательный падеж (часто как в русском).",
 body:[{t:"Глагол;Пример|dać / dawać (дать / давать);Dałem Kasi kwiaty.|pomagać / pomóc (помогать);Pomagam sąsiadowi.|dziękować (благодарить);Dziękuję koledze.|wierzyć (верить);Wierzę ci.|ufać (доверять);Ufam przyjacielowi.|przyglądać się (присматриваться);Przyglądam się obrazowi.|kibicować (болеть за);Kibicuję polskiej drużynie."},

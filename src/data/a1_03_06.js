@@ -95,7 +95,7 @@ fill|Выберите слово|___ telefon jest nowy.|Ten;Ta;To|0|telefon на
 fill|Выберите слово|___ zdjęcie jest ładne.|Ten;Ta;To|2|zdjęcie на -e → to.`},
 {k:"grammar",lab:"Прилагательные и цвета",title:"Какой? Jaki, jaka, jakie",sub:"Прилагательное меняет окончание вслед за существительным.",
 body:[{t:"Род;Вопрос;Окончание;Пример|мужской;jaki?;-y / -i;nowy stół, tani telefon|женский;jaka?;-a;nowa lampa, tania lampa|средний;jakie?;-e;nowe okno, tanie okno"},
-"После k и g мужское окончание всегда <b>-i</b>: <span class='pl'>duży — wysoki, drogi</span>. Женский род: <span class='pl'>wysoka, droga</span>, средний: <span class='pl'>wysokie, drogie</span>.",
+"После k и g мужское окончание всегда <b>-i</b>: <span class='pl'>wysoki, drogi</span> (сравните: <span class='pl'>nowy, duży</span>). Женский род: <span class='pl'>wysoka, droga</span>, средний: <span class='pl'>wysokie, drogie</span>.",
 {h:"Цвета"},
 {ex:"czerwony=красный|niebieski=синий, голубой|zielony=зелёный|żółty=жёлтый|biały=белый|czarny=чёрный|szary=серый|brązowy=коричневый"},
 {trap:"<span class='pl'>niebieski</span> — это и синий, и голубой. Тёмно-синий — <span class='pl'>granatowy</span>."}],

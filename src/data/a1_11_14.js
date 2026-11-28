@@ -20,14 +20,17 @@ mcq|«Pierogi ruskie» — это вареники с…|творогом и к�
 listen|Послушайте и выберите перевод|Co państwo zamawiają?|Что будете заказывать?;Сколько вас?;Вам понравилось?|0|państwo — вежливое «Вы» к группе.`},
 {k:"grammar",lab:"Родительный при отрицании",title:"Nie mam czasu: родительный падеж",sub:"Когда глагол с винительным падежом получает «nie», дополнение переходит в родительный падеж.",
 body:["Сравните: <span class='pl'>Mam czas</span> — <span class='pl'>Nie mam czasu</span>. <span class='pl'>Piję kawę</span> — <span class='pl'>Nie piję kawy</span>.",
-{t:"Род;Им. п.;Род. п.;Пример|м. р.;czas, ser, brat;czasu, sera, brata;Nie mam brata.|ж. р.;kawa, herbata;kawy, herbaty;Nie piję kawy.|ж. р. после k, g, -ia;książka, kuchnia;książki, kuchni;Nie mam książki.|ср. р.;mięso, mleko;mięsa, mleka;Nie jem mięsa."},
-{note:"У мужского рода окончание бывает <b>-a</b> (часто у людей, животных, конкретных предметов: brata, kota, sera, chleba) или <b>-u</b> (часто у абстрактных и «неисчисляемых»: czasu, soku, cukru). Лучше запоминать вместе со словом."},
+{t:"Род;Им. п.;Род. п.;Пример|м. р. одушевлённый (люди, животные);brat, Tomek, kot, pies;brata, Tomka, kota, psa;Nie mam brata.|м. р. неодушевлённый;ser, chleb, czas, sok;sera, chleba, czasu, soku;Nie mam czasu.|ж. р.;kawa, herbata;kawy, herbaty;Nie piję kawy.|ж. р. после k, g, -ia;książka, kuchnia;książki, kuchni;Nie mam książki.|ср. р.;mięso, mleko;mięsa, mleka;Nie jem mięsa."},
+{note:"<b>Люди и животные мужского рода — всегда -a</b>, выбора нет: <span class='pl'>brata, Tomka, Maksa, kota, psa</span>. <b>Неодушевлённые</b> мужского рода — <b>-a</b> или <b>-u</b>: тут выбор есть, и его надо запоминать вместе со словом. Подсказки: <b>-a</b> часто у месяцев, польских городов, частей тела и многих продуктов (<span class='pl'>stycznia, Krakowa, nosa, sera, chleba</span>); <b>-u</b> — у абстрактных слов, веществ и большинства односложных (<span class='pl'>czasu, spokoju, cukru, soku, domu, sklepu</span>). Мужские слова на -a склоняются как женские: <span class='pl'>kolega → kolegi, kierowca → kierowcy</span>."},
 {ex:"Nie mam czasu.=У меня нет времени.|Nie lubię mleka.=Я не люблю молоко.|Nie znam Tomka.=Я не знаю Томека.|Nie ma chleba.=Хлеба нет."},
 {trap:"Родительный нужен и после <span class='pl'>bez</span> (без) и <span class='pl'>dla</span> (для): <span class='pl'>bez cukru, dla mamy, dla mnie</span>."}],
 ex:`fill|Выберите форму|Nie piję ___.|kawa;kawę;kawy|2|nie + piję → родительный: kawy.
 fill|Выберите форму|Tomek nie je ___.|mięso;mięsa;mięsem|1|mięso → mięsa.
 fill|Выберите форму|Nie mam ___.|czas;czasu;czasa|1|czas → czasu.
 fill|Выберите форму|Herbata bez ___.|cukier;cukru;cukrem|1|bez + родительный: cukru.
+fill|Выберите форму|Nie znam ___.|Tomek;Tomku;Tomka|2|Человек, мужской род: всегда -a → Tomka.
+fill|Выберите форму|Nie mam ___.|kota;kotu;kot|0|Животное, мужской род: всегда -a → kota.
+mcq|Какое правило верное?|Люди м. р. — -a или -u, как запомнится.;Люди и животные м. р. — всегда -a.;Все слова м. р. — всегда -u.|1|brata, Tomka, kota — всегда -a. Выбор -a / -u есть только у предметов: sera, но czasu.
 type|Напишите по-польски: «Я не люблю рыбу»|nie lubię ryby|ryba → ryby.`},
 {k:"grammar",lab:"Ze mną, z tobą",title:"Z kim? Со мной, с тобой",sub:"Личные местоимения в творительном падеже.",
 body:[{t:"Местоимение;С кем?;Пример|ja;ze mną;Idziesz ze mną?|ty;z tobą;Idę z tobą.|on, ono;z nim;Rozmawiam z nim.|ona;z nią;Mieszkam z nią.|my;z nami;Chodź z nami!|wy;z wami;Jadę z wami.|oni, one;z nimi;Gram z nimi w piłkę."},
@@ -152,7 +155,7 @@ listen|Который час?|Jest za pięć dwunasta.|11:55;12:05;12:55|0|za pi
 {k:"grammar",lab:"Дни недели",title:"Dni tygodnia: дни недели",sub:"«В какой день» — предлог w и винительный падеж.",
 body:[{t:"День;Когда?|poniedziałek (понедельник);w poniedziałek|wtorek (вторник);we wtorek|środa (среда);w środę|czwartek (четверг);w czwartek|piątek (пятница);w piątek|sobota (суббота);w sobotę|niedziela (воскресенье);w niedzielę"},
 {ex:"W poniedziałek pracuję.=В понедельник я работаю.|Co robisz w weekend?=Что делаешь на выходных?|Do zobaczenia we wtorek!=До встречи во вторник!"},
-{note:"Перед «w» в начале слова — <span class='pl'>we</span>: <span class='pl'>we wtorek</span>, <span class='pl'>we Wrocławiu</span>."},
+{note:"Если слово начинается на <b>w</b> или <b>f</b> + согласный, вместо w пишут <span class='pl'>we</span>: <span class='pl'>we wtorek</span>, <span class='pl'>we Wrocławiu</span>, <span class='pl'>we Francji</span>. Но: <span class='pl'>w wodzie</span>, <span class='pl'>w Warszawie</span> (после w гласная)."},
 {h:"Приглашение"},
 {ex:"Masz czas w sobotę?=Ты свободен в субботу?|Masz ochotę na kawę?=Хочешь кофе?|Pasuje ci?=Тебе подходит?|Niestety, nie mogę.=К сожалению, не могу.|Może innym razem?=Может, в другой раз?"}],
 ex:`fill|Выберите форму|Spotkamy się ___ środę.|w;we;na|0|w środę.

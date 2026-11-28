@@ -80,13 +80,23 @@ mcq|Где остановка?|przed domem;za domem;w parku|0|Przystanek jest pr
 mcq|Что значит «kaucja»?|залог;комиссия;коммунальные|0|kaucja — залог, его возвращают в конце аренды.|kaucja
 listen|Послушайте и выберите перевод|Czy mogę obejrzeć pokój?|Можно посмотреть комнату?;Можно снять комнату?;Комната свободна?|0|obejrzeć — осмотреть, посмотреть.`},
 {k:"grammar",lab:"Предлоги места",title:"Nad, pod, przed, za, między, obok",sub:"Предлоги, отвечающие на вопрос «где?», и падежи после них.",
-body:[{t:"Предлог;Значение;Падеж;Пример|nad;над;творительный;nad stołem, nad zlewem|pod;под;творительный;pod łóżkiem, pod oknem|przed;перед;творительный;przed domem|za;за;творительный;za domem, za sklepem|między;между;творительный;między parkiem a domem|obok;рядом с;родительный;obok sklepu|koło;около;родительный;koło dworca|blisko;близко к;родительный;blisko centrum"},
+body:["У каждого предлога свой падеж. Не смешивайте их: учите предлоги группами.",
+{h:"+ творительный (kim? czym?)"},
+{t:"Предлог;Значение;Пример|nad;над;nad stołem, nad zlewem|pod;под;pod łóżkiem, pod oknem|przed;перед;przed domem, przed szkołą|za;за;za domem, za sklepem|między;между;między parkiem a domem"},
+{h:"+ родительный (kogo? czego?)"},
+{t:"Предлог;Значение;Пример|obok;рядом с;obok sklepu, obok fontanny|koło;около, возле;koło dworca, koło kościoła|blisko;близко к;blisko centrum|naprzeciwko;напротив;naprzeciwko poczty|u;у (у кого-то);u Kasi, u lekarza"},
+{h:"+ предложный (o kim? o czym?)"},
+{t:"Предлог;Значение;Пример|przy;у, возле, при;przy oknie, przy stole, przy kościele|w;в;w kuchni, w szafie|na;на;na stole, na ścianie"},
+{trap:"<span class='pl'>obok</span> и <span class='pl'>przy</span> оба значат «рядом», но падежи разные: <span class='pl'>obok okna</span> (родительный), <span class='pl'>przy oknie</span> (предложный).",lb:"Ловушка"},
 {ex:"Kot śpi pod łóżkiem.=Кот спит под кроватью.|Lampa wisi nad stołem.=Лампа висит над столом.|Spotkajmy się przed kinem.=Встретимся перед кинотеатром."},
 {note:"Это совпадает с русским: «над столом, под кроватью, перед домом» — тоже творительный. Только окончания польские: <b>-em</b> (м. р., ср. р.), <b>-ą</b> (ж. р.)."}],
 ex:`fill|Выберите форму|Kot śpi pod ___.|łóżko;łóżkiem;łóżka|1|pod + творительный: łóżkiem.
 fill|Выберите форму|Sklep jest obok ___.|park;parkiem;parku|2|obok + родительный: parku.
 fill|Выберите форму|Czekam przed ___.|szkoła;szkołą;szkole|1|przed + творительный: szkołą.
-mcq|Как сказать «за домом»?|za domem;za domu;za dom|0|za (где?) + творительный: za domem.|za domem`},
+mcq|Как сказать «за домом»?|za domem;za domu;za dom|0|za (где?) + творительный: za domem.|za domem
+fill|Выберите форму|Biurko stoi przy ___.|okno;okna;oknie|2|przy + предложный: oknie.
+fill|Выберите форму|Mieszkam koło ___.|dworca;dworcu;dworcem|0|koło + родительный: dworca.
+mcq|Какой падеж после «obok»?|творительный;родительный;предложный|1|obok + родительный: obok sklepu.|obok sklepu`},
 {k:"grammar",lab:"Этажи и аренда",title:"Piętro, czynsz, media",sub:"Как говорят об этажах и о деньгах за квартиру.",
 body:[{t:"Как говорят;Значение|na parterze;на первом этаже (уровень земли)|na pierwszym piętrze;на втором этаже|na drugim piętrze;на третьем этаже|na ostatnim piętrze;на последнем этаже"},
 {trap:"Польский <span class='pl'>parter</span> — это наш первый этаж. Поэтому <span class='pl'>pierwsze piętro</span> — это наш второй этаж!",lb:"Ловушка для русскоязычных"},

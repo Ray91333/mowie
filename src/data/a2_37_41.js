@@ -83,14 +83,24 @@ match|Соедините|Niemiec=немец;Francuz=француз;Anglik=анг
 {k:"grammar",lab:"Мужско-личная форма",title:"Rodzaj męskoosobowy: Polacy, studenci",sub:"Главная особенность польского мн. числа: у групп мужчин своя форма.",
 body:["Во множественном числе польский различает две формы: <b>мужско-личную</b> (группы, где есть хотя бы один мужчина) и <b>немужско-личную</b> (всё остальное: женщины, дети, животные, вещи).",
 {t:"Ед. ч.;Мужско-личная (мужчины);Немужско-личная (вещи, женщины)|student / studentka;studenci;studentki|kolega / koleżanka;koledzy;koleżanki|lekarz / lekarka;lekarze;lekarki|Polak / Polka;Polacy;Polki|pan / pani;panowie;panie|nauczyciel / nauczycielka;nauczyciele;nauczycielki"},
-"Типичные окончания мужско-личной формы: <b>-i</b> (student → studenci, Francuz → Francuzi),<b>-y</b> (Polak → Polacy, kolega → koledzy), <b>-owie</b> (pan → panowie, syn → synowie), <b>-e</b> (lekarz → lekarze).",
+"Окончания мужско-личной формы: <b>-i / -y</b> (с чередованием согласной), <b>-e</b> и <b>-owie</b>. Какое выбрать, зависит от последней согласной:",
+{t:"Слово кончается на;Мн. ч. (мужчины);Примеры|-t;-ci;student → studenci, architekt → architekci|-d;-dzi;sąsiad → sąsiedzi, Szwed → Szwedzi|-r;-rzy;doktor → doktorzy, aktor → aktorzy, kelner → kelnerzy|-k;-cy;Polak → Polacy, Słowak → Słowacy|-g;-dzy;kolega → koledzy, psycholog → psycholodzy|-ch;-si;Czech → Czesi, Włoch → Włosi|-z, -n, -m, -p, -b, -w;-i;Francuz → Francuzi, Rumun → Rumuni|-arz, -acz, -l, -ć, -j (мягкие);-e;lekarz → lekarze, nauczyciel → nauczyciele, gość → goście|члены семьи, титулы;-owie;pan → panowie, syn → synowie, ojciec → ojcowie, mąż → mężowie, Belg → Belgowie"},
+{h:"Особые формы — учить наизусть"},
+{ex:"człowiek → ludzie=люди|brat → bracia=братья|przyjaciel → przyjaciele=друзья|Amerykanin → Amerykanie=американцы|Hiszpan → Hiszpanie=испанцы|Niemiec → Niemcy=немцы|Ukrainiec → Ukraińcy=украинцы|chłopiec → chłopcy=мальчики, парни"},
+{h:"Числа с мужчинами"},
+"С группой мужчин числа тоже особые: <span class='pl'>dwaj studenci</span> или <span class='pl'>dwóch studentów</span>, <span class='pl'>trzej / trzech, czterej / czterech</span>; от пяти — <span class='pl'>pięciu studentów</span> (не «pięć»). Сравните: <span class='pl'>pięć studentek, pięć książek</span>.",
 {ex:"To są moi koledzy.=Это мои друзья (мужчины / смешанная группа).|To są moje koleżanki.=Это мои подруги.|Ci studenci są z Hiszpanii.=Эти студенты из Испании."},
 {note:"Указательное и притяжательное тоже меняются: <span class='pl'>ci studenci, moi koledzy</span> (мужчины), но <span class='pl'>te studentki, moje koleżanki</span>."}],
 ex:`fill|Выберите форму|To są moi ___.|koledzy;kolegi;kolegów|0|Мужско-личная форма: koledzy.
 fill|Выберите слово|___ studenci są z Polski.|Ci;Te;Ta|0|Мужчины: ci.
 fill|Выберите форму|Moje ___ pracują w szpitalu.|koleżanki;koledzy;kolegi|0|Только женщины: koleżanki.
 mcq|Как будет мн. ч. от «pan»?|panowie;pani;pany|0|pan → panowie.|panowie
-type|Напишите по-польски: «поляки» (группа)|polacy|Polak → Polacy.`},
+type|Напишите по-польски: «поляки» (группа)|Polacy|Polak → Polacy.
+fill|Выберите форму|Moi ___ są bardzo mili.|sąsiady;sąsiedzi;sąsiadowie|1|-d → -dzi: sąsiad → sąsiedzi.
+fill|Выберите форму|W szpitalu pracują dobrzy ___.|doktory;doktorowie;doktorzy|2|-r → -rzy: doktor → doktorzy.
+fill|Выберите форму|To są ___ z Pragi.|Czesi;Czechy;Czechowie|0|-ch → -si: Czech → Czesi (Czechy — это страна).
+fill|Выберите форму|W naszym zespole pracuje ___ programistów.|pięć;pięciu;piąty|1|С группой мужчин: pięciu programistów.
+mcq|Мн. ч. от «człowiek»?|człowieki;ludzie;człowiekowie|1|Особая форма: człowiek → ludzie.|ludzie`},
 {k:"vocab",ex:`match|Соедините|cudzoziemiec=иностранец;kraj=страна;język=язык;kultura=культура;obywatelstwo=гражданство
 mcq|Что значит «narzekać»?|жаловаться, ворчать;нарекать имя;обещать|0|narzekać na + вин. п. — жаловаться на.|narzekać`}],
 vocab:`# Национальности

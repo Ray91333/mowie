@@ -36,12 +36,14 @@ mcq|Как пожелать удачи?|Powodzenia!;Szczęście!;Udany!|0|Powodz
 type|Напишите по-польски: «Весёлого Рождества!»|wesołych świąt|Wesołych Świąt!`},
 {k:"grammar",lab:"Повтор: родительный",title:"Dopełniacz: всё вместе",sub:"Родительный падеж — самый частый в польском. Собираем все случаи вместе.",
 body:[{t:"Когда;Пример|после отрицания;Nie ma mięsa. Nie mam czasu.|после do, od, bez, dla, z (откуда), u, obok, koło;do domu, bez cukru, dla babci, z Gdańska, u Kasi|после количества;dużo ludzi, kilo jabłek, pięć potraw|принадлежность;dom babci, mieszkanie Maksa|даты;dwudziestego czwartego grudnia|глаголы: szukać, potrzebować, życzyć, uczyć się, bać się;szukam pracy, potrzebuję pomocy, boję się psa"},
-{ex:"Potrzebuję twojej pomocy.=Мне нужна твоя помощь.|Szukam prezentu dla babci.=Ищу подарок для бабушки.|Boję się egzaminu.=Боюсь экзамена."},
+{h:"Окончания"},{t:"Род;Ед. ч.;Примеры;Мн. ч.;Примеры|м. р. одушевлённый;всегда -a;brata, Tomka, psa;-ów (-y, -i);Polaków, psów, lekarzy|м. р. неодушевлённый;-a или -u (запоминать);sera, chleba / czasu, domu;-ów (-y, -i);serów, domów, pokoi|ж. р.;-y / -i;kawy, książki, kuchni;нулевое (-i);kaw, książek, kuchni|ср. р.;-a;mięsa, okna;нулевое;okien, jabłek"},"Особые формы: <span class='pl'>brat → brata, мн. ч. braci; człowiek → człowieka, мн. ч. ludzi; dziecko → dziecka, мн. ч. dzieci</span>. Прилагательное: м. р. и ср. р. <b>-ego</b>, ж. р. <b>-ej</b>, мн. ч. <b>-ych / -ich</b>: <span class='pl'>nowego kolegi, dobrej kawy, nowych książek</span>.",{ex:"Potrzebuję twojej pomocy.=Мне нужна твоя помощь.|Szukam prezentu dla babci.=Ищу подарок для бабушки.|Boję się egzaminu.=Боюсь экзамена."},
 {trap:"<span class='pl'>potrzebować</span> + родительный: <span class='pl'>potrzebuję czasu</span> (мне нужно время). Конструкция «мне нужно» тут не работает: «нуждаюсь в чём».",lb:"Ловушка для русскоязычных"}],
 ex:`fill|Выберите форму|Szukam ___ dla Kasi.|prezent;prezentu;prezentem|1|szukać + родительный.
 fill|Выберите форму|Potrzebuję ___.|pomoc;pomocy;pomocą|1|potrzebować + родительный.
 fill|Выберите форму|To jest dom ___.|babcia;babci;babcią|1|Принадлежность: родительный, babci.
-mcq|Что значит «Boję się psa»?|Я боюсь собаки.;Я бью собаку.;Я ищу собаку.|0|bać się + родительный: боюсь кого/чего.|Boję się psa.`},
+mcq|Что значит «Boję się psa»?|Я боюсь собаки.;Я бью собаку.;Я ищу собаку.|0|bać się + родительный: боюсь кого/чего.|Boję się psa.
+fill|Выберите форму|Szukam ___ (nowy kolega).|nowy kolega;nowemu koledze;nowego kolegi|2|szukać + родительный: прилагательное -ego, kolega склоняется как женские → kolegi.
+fill|Выберите форму|Nie ma tu ___ (dobra kawiarnia).|dobrej kawiarni;dobrą kawiarnię;dobra kawiarnia|0|nie ma + родительный: ж. р. -ej, -i.`},
 {k:"vocab",ex:`match|Соедините|choinka=ёлка;kolęda=колядка;gwiazdka=звёздочка;opłatek=облатка;karp=карп
 mcq|Что такое «pasterka»?|ночная рождественская месса;пастушка;пастила|0|Pasterka — месса в полночь с 24 на 25 декабря.|pasterka`}],
 vocab:`# Рождество

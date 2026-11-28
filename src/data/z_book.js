@@ -59,7 +59,7 @@ CZ(18,"C",`cloze|Proszę uzupełnić zaimki.|Дательный падеж ме�
 CZ(19,"B",`cloze|Proszę uzupełnić końcówki.|Предложный падеж|Jestem w dom[u]. // Kubek jest na stol[e]. // Pracuję w biurz[e]. // Mieszkam w Polsc[e]. // Czajnik jest w kuchn[i].`);
 CZ(19,"C",`cloze|Proszę uzupełnić przyimki.|Вставьте o, po, przy, na|Rozmawiamy [o] pracy. // [Po] pracy idę do domu. // Siedzę [przy] oknie. // Książka jest [na] stole.|bank`);
 
-CZ(20,"B",`cloze|Proszę uzupełnić końcówki.|Предлоги места + падеж|Kot śpi pod łóżk[iem]. // Czekam przed szkoł[ą]. // Sklep jest obok park[u]. // Lampa wisi nad stoł[em].`);
+CZ(20,"B",`cloze|Proszę uzupełnić końcówki.|Предлоги места + падеж|Kot śpi pod łóżk[iem]. // Czekam przed szkoł[ą]. // Sklep jest obok park[u]. // Lampa wisi nad stoł[em]. // Siedzę przy okn[ie]. // Czekam koło kości[oła].`);
 CZ(20,"C",`cloze|Proszę uzupełnić ogłoszenie.|Вставьте слова из объявления|Pokój do [wynajęcia]. // Mieszkanie jest na trzecim [piętrze]. // [Czynsz]: 1200 zł plus [media]. // [Kaucja]: jeden czynsz.|bank`);
 
 CZ(21,"B",`cloze|Proszę uzupełnić przyimki.|Вставьте do, nad, w, u|Jadę [do] Krakowa. // Latem jedziemy [nad] morze. // W sobotę byłem [w] górach. // Jestem [u] Kasi.|bank|na`);
@@ -112,7 +112,7 @@ CZ(36,"C",`cloze|Proszę uzupełnić końcówki.|który, która, które|To jest 
 CZ(37,"B",`cloze|Proszę uzupełnić zdania.|Сравнение наречий|Idź [szybciej]! // Mówisz coraz [lepiej] po polsku. // Dzisiaj jest [cieplej] niż wczoraj. // Kto biega [najszybciej]?|bank|lepszy`);
 
 CZ(38,"B",`cloze|Proszę uzupełnić końcówki.|Национальности|Maks jest Ukraiń[cem]. // Kasia jest Pol[ką]. // Diego jest Hiszpan[em]. // Natalia jest Białorusin[ką].`);
-CZ(38,"C",`cloze|Proszę uzupełnić końcówki.|Мужско-личная форма|To są moi koled[zy]. // Ci student[ci] są z Polski. // A to są moje koleżank[i].`);
+CZ(38,"C",`cloze|Proszę uzupełnić końcówki.|Мужско-личная форма|To są moi koled[zy]. // Ci student[ci] są z Polski. // A to są moje koleżank[i]. // Nasi sąsied[zi] są mili. // Ci aktor[zy] są znani. // Moi bra[cia] mieszkają w Kijowie.`);
 
 CZ(39,"B",`cloze|Proszę uzupełnić końcówki.|Прилагательные во множественном числе|Moi koledzy są mil[i]. // Te koleżanki są mił[e]. // Polscy studenci są młodz[i]. // Te książki są now[e].`);
 CZ(39,"C",`cloze|Proszę uzupełnić: byli czy były?|Прошедшее время мн. ч.|Kasia i Natalia [były] w kinie. // Maks i Kasia [byli] w kinie. // Programiści [mieli] spotkanie. // Dziewczyny [przyniosły] ciasto.|bank`);
